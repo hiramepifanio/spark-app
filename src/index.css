@@ -1,1 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+    --color-primary: #0077b6;
+    --color-primary-light: #e6f2f9;
+    --color-primary-dark: #005a8d;
+    --color-secondary: #00b4d8;
+    --color-success: #2a9d8f;
+    --color-warning: #e9c46a;
+    --color-danger: #e76f51;
+    --color-dark: #264653;
+    --color-gray-100: #f8f9fa;
+    --color-gray-200: #e9ecef;
+    --color-gray-300: #dee2e6;
+    --color-gray-400: #ced4da;
+    --color-gray-500: #adb5bd;
+    --color-gray-600: #6c757d;
+    --color-gray-700: #495057;
+    --color-gray-800: #343a40;
+    --color-gray-900: #212529;
+    --color-white: #ffffff;
+    --font-family-sans-serif: 'Inter', sans-serif;
+    --body-bg: var(--color-gray-100);
+    --body-color: var(--color-gray-800);
+    --border-radius: 0.5rem;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+    font-family: var(--font-family-sans-serif);
+    font-size: 16px;
+    color: var(--body-color);
+    background-color: var(--body-bg);
+
+}
+
+#app-container {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    grid-template-rows: 60px 1fr;
+    grid-template-areas:
+        "sidebar topbar"
+        "sidebar main";
+    height: 100vh;
+}
+
+#sidebar {
+    background-color: var(--color-gray-900);
+    color: var(--color-gray-200);
+    display: flex;
+    flex-direction: column;
+    grid-area: sidebar;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    justify-content: center;
+}
+
+#nav {
+    margin: 1rem 0;
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.25rem;
+    color: var(--color-gray-300);
+}
+
+.nav-item a:hover {
+    background-color: var(--color-gray-800);
+    color: var(--color-white);
+}
+
+.nav-item a.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 500;
+}
+
+.nav-icon-container {
+    display: flex;
+    align-items: center;
+    margin-right: 0.75rem;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}

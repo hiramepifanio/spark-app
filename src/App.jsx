@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import Sidebar from './components/Sidebar'
 
 function App() {
 
   return (
-    <h1>Hello</h1>
+    <div id='app-container'>
+      <Sidebar />
+    </div>
   )
 }
 

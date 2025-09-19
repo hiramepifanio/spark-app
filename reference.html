@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGI Liga - Protótipo de Gestão da Inovação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS Reset and Basic Setup */
+        :root {
+            --color-primary: #0077b6;
+            --color-primary-light: #e6f2f9;
+            --color-primary-dark: #005a8d;
+            --color-secondary: #00b4d8;
+            --color-success: #2a9d8f;
+            --color-warning: #e9c46a;
+            --color-danger: #e76f51;
+            --color-dark: #264653;
+            --color-gray-100: #f8f9fa;
+            --color-gray-200: #e9ecef;
+            --color-gray-300: #dee2e6;
+            --color-gray-400: #ced4da;
+            --color-gray-500: #adb5bd;
+            --color-gray-600: #6c757d;
+            --color-gray-700: #495057;
+            --color-gray-800: #343a40;
+            --color-gray-900: #212529;
+            --color-white: #ffffff;
+            --font-family-sans-serif: 'Inter', sans-serif;
+            --body-bg: var(--color-gray-100);
+            --body-color: var(--color-gray-800);
+            --border-radius: 0.5rem;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: var(--font-family-sans-serif);
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--body-color);
+            background-color: var(--body-bg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            grid-template-rows: 60px 1fr;
+            grid-template-areas:
+                "sidebar topbar"
+                "sidebar main";
+            height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+        .app-container.sidebar-collapsed {
+            grid-template-columns: 70px 1fr;
+        }
+
+        .topbar {
+            grid-area: topbar;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            background-color: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-200);
+            box-shadow: var(--shadow-sm);
+            z-index: 100;
+        }
+        .sidebar {
+            grid-area: sidebar;
+            background-color: var(--color-gray-900);
+            color: var(--color-gray-200);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            overflow-x: hidden;
+        }
+        .main-content {
+            grid-area: main;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+        .main-content .page { display: none; }
+        .main-content .page.active { display: block; }
+        
+        /* Sidebar */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            padding: 0 1.25rem;
+            flex-shrink: 0;
+        }
+        .sidebar-header .logo-icon { font-size: 1.5rem; }
+        .sidebar-header .logo-text { 
+            margin-left: 0.75rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .sidebar-nav {
+            flex-grow: 1;
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.25rem;
+            color: var(--color-gray-300);
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            white-space: nowrap;
+        }
+        .nav-item a:hover {
+            background-color: var(--color-gray-800);
+            color: var(--color-white);
+        }
+        .nav-item a.active {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            font-weight: 500;
+        }
+
+        .nav-item .submenu {
+            list-style: none;
+            padding-left: 1.5rem; 
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .nav-item.open .submenu {
+            max-height: 500px;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .submenu a {
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+            font-size: 0.9rem;
+        }
+        
+        .submenu a.active {
+            color: var(--color-white);
+            font-weight: 500;
+        }
+
+        .nav-item a svg { 
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .app-container.sidebar-collapsed .logo-text,
+        .app-container.sidebar-collapsed .nav-text {
+            display: none;
+        }
+        .app-container.sidebar-collapsed .sidebar-header,
+        .app-container.sidebar-collapsed .nav-item a {
+            justify-content: center;
+        }
+        .app-container.sidebar-collapsed .nav-item a svg {
+            margin-right: 0;
+        }
+
+        /* Topbar */
+        .topbar-left { display: flex; align-items: center; gap: 1rem; }
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--color-gray-600);
+        }
+        .global-search { position: relative; }
+        .global-search input {
+            border: 1px solid var(--color-gray-300);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+            min-width: 300px;
+        }
+        .global-search svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gray-500);
+            width: 20px;
+            height: 20px;
+        }
+        .topbar-right { display: flex; align-items: center; gap: 1rem; }
+
+        /* General Components */
+        .card {
+            background-color: var(--color-white);
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-gray-200);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-body { padding: 1.5rem; }
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+        h1, h2, h3, h4 { margin-top: 0; font-weight: 600; }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.25rem; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-primary { background-color: var(--color-primary); color: var(--color-white); border-color: var(--color-primary); }
+        .btn-primary:hover { background-color: var(--color-primary-dark); border-color: var(--color-primary-dark); }
+        .btn-secondary { background-color: var(--color-gray-200); color: var(--color-gray-800); border-color: var(--color-gray-300); }
+        .btn-secondary:hover { background-color: var(--color-gray-300); }
+        .btn-secondary.active {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border-color: var(--color-primary);
+        }
+        .btn-danger { background-color: var(--color-danger); color: var(--color-white); border-color: var(--color-danger); }
+
+        /* Forms */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-control, .form-select {
+            display: block;
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            font-size: 1rem;
+            border: 1px solid var(--color-gray-300);
+            border-radius: var(--border-radius);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px var(--color-primary-light);
+        }
+        .form-control.is-invalid { border-color: var(--color-danger); }
+        .invalid-feedback {
+            color: var(--color-danger);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .form-control.is-invalid + .invalid-feedback,
+        .form-select.is-invalid + .invalid-feedback {
+            display: block;
+        }
+        .form-grid { display: grid; gap: 1rem; }
+        .grid-col-span-2 { grid-column: span 2 / span 2; }
+
+        /* KPI Card */
+        .kpi-card { text-align: center; }
+        .kpi-value { font-size: 2rem; font-weight: 700; color: var(--color-primary); }
+        .kpi-label { color: var(--color-gray-600); font-size: 0.9rem;}
+
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            min-height: 600px;
+        }
+        .kanban-column {
+            background-color: var(--color-gray-200);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+        }
+        .kanban-column-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .kanban-card-count {
+            background-color: var(--color-gray-300);
+            border-radius: 1rem;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        .kanban-cards {
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .kanban-card {
+            background-color: var(--color-white);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
+            cursor: grab;
+        }
+        .kanban-card:active { cursor: grabbing; }
+        .kanban-card.dragging { opacity: 0.5; }
+        .kanban-card-title { font-weight: 600; margin-bottom: 0.5rem; }
+        .kanban-card-meta { font-size: 0.85rem; color: var(--color-gray-600); }
+        .kanban-column.drag-over {
+            border: 2px dashed var(--color-primary);
+        }
+
+        .kanban-board-scrollable {
+            display: grid;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+            min-height: 600px;
+        }
+        .kanban-board-scrollable .kanban-column {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.is-visible { display: flex; }
+        .modal-content {
+            background-color: var(--color-white);
+            margin: auto;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            box-shadow: var(--shadow-md);
+            animation: modal-fade-in 0.3s;
+        }
+        @keyframes modal-fade-in { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        .modal-body { padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--color-gray-200);
+        }
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-gray-500);
+        }
+
+        /* Toasts */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            color: var(--color-white);
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: translateX(100%);
+            animation: slide-in 0.5s forwards;
+        }
+        @keyframes slide-in { to { opacity: 1; transform: translateX(0); } }
+        .toast.toast-success { background-color: var(--color-success); }
+        .toast.toast-danger { background-color: var(--color-danger); }
+        .toast.toast-info { background-color: var(--color-secondary); }
+
+        /* Meetings page styles */
+        .view-switcher { display: flex; gap: 0.5rem; align-items: center; }
+        .view-switcher .btn:not(.active) { background-color: var(--color-white); color: var(--color-gray-800); }
+        .meetings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .meeting-card {
+            background-color: var(--color-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+        }
+        .meeting-card-info h4 { margin-bottom: 0.5rem; }
+        .meeting-card-meta { display: flex; gap: 1rem; color: var(--color-gray-600); margin-bottom: 0.5rem; flex-wrap: wrap; }
+        .meeting-card-meta a { color: var(--color-primary); text-decoration: none; }
+        .meeting-card-meta a:hover { text-decoration: underline; }
+        .meeting-card-attendees { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+        .badge-attendee { background-color: var(--color-gray-200); color: var(--color-gray-800); margin: 0.1rem; }
+        .meeting-card-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        /* Calendar View */
+        .calendar-container h3 { text-align: center; margin-bottom: 1.5rem; }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: var(--color-gray-300);
+            border: 1px solid var(--color-gray-300);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        .calendar-header, .calendar-day {
+            background-color: var(--color-white);
+            padding: 0.5rem;
+        }
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            background-color: var(--color-gray-100);
+        }
+        .calendar-day {
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+        }
+        .calendar-day.is-other-month { background-color: var(--color-gray-100); }
+        .day-number { font-weight: 500; margin-bottom: 0.5rem; }
+        .calendar-day.is-today .day-number {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-events {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex-grow: 1;
+        }
+        .calendar-event {
+            background-color: var(--color-primary-light);
+            border-left: 3px solid var(--color-primary);
+            color: var(--color-primary-dark);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+        .calendar-event:hover {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+        }
+        
+        /* Filter Dropdown */
+        .filter-container {
+            position: relative;
+            display: inline-block;
+        }
+        .filter-panel {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.5rem);
+            background-color: var(--color-white);
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            padding: 1.25rem;
+            width: 280px;
+            z-index: 100;
+            animation: modal-fade-in 0.2s;
+        }
+        .filter-panel.is-open { display: block; }
+        
+        /* Utility classes */
+        .d-none { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mb-0 { margin-bottom: 0; }
+        .w-100 { width: 100%; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "topbar"
+                    "main";
+            }
+            .sidebar {
+                position: fixed;
+                left: -240px;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            .sidebar.is-open { left: 0; }
+            .app-container.sidebar-collapsed { grid-template-columns: 1fr; }
+            .topbar-left { justify-content: start; }
+            .sidebar-toggle { display: block; }
+            .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr; }
+            .global-search input { width: 150px; }
+            .kanban-board { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app-main-container">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Alternar menu">☰</button>
+            </div>
+            <div class="topbar-right">
+                <div class="user-role-selector">
+                    <label for="role-switcher" class="sr-only">Simular Papel:</label>
+                    <select id="role-switcher" class="form-select">
+                        <option value="Administrador">Admin</option>
+                        <option value="Gestor de Inovação">Gestor</option>
+                        <option value="Colaborador">Colaborador</option>
+                        <option value="Parceiro">Parceiro</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">💡</span>
+                <span class="logo-text">Liga Inovação</span>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link active">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a1 1 0 011 1v4a1 1 0 01-2 0V4a1 1 0 011-1zm-4 2a1 1 0 011 1v12a1 1 0 01-2 0V6a1 1 0 011-1zm8 4a1 1 0 011 1v8a1 1 0 01-2 0v-8a1 1 0 011-1zM4 14a1 1 0 011 1v4a1 1 0 01-2 0v-4a1 1 0 011-1z"></path></svg>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="nav-projetos">
+                    <a href="#" class="nav-link nav-parent">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 13.129v-2.258a3.75 3.75 0 00-2.09-3.424l-6-3.464a3.75 3.75 0 00-3.82 0l-6 3.464A3.75 3.75 0 002.25 10.87v2.258a3.75 3.75 0 002.09 3.424l6 3.464a3.75 3.75 0 003.82 0l6-3.464a3.75 3.75 0 002.09-3.424zM12 15.632l-6-3.464V8.704l6 3.464v3.464zm6.75-6.398l-6 3.464v-3.464l6-3.464v3.464z"></path></svg>
+                        <span class="nav-text">Projetos</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#projetos-geral" class="nav-link">Geral</a></li>
+                        <li><a href="#projetos-interno" class="nav-link">Projetos Internos</a></li>
+                        <li><a href="#projetos-externo" class="nav-link">Projetos Externos</a></li>
+                        <li><a href="#projetos-startups" class="nav-link">Startups</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#reunioes" class="nav-link">
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A.75.75 0 017.05 14.5h9.9a.75.75 0 01.74.617 4.5 4.5 0 01-1.53 4.282.75.75 0 01-1.06-1.06 3 3 0 001.02-2.839H6.31zM15.44 15.117a.75.75 0 01.637-.617 4.5 4.5 0 013.62 3.62.75.75 0 01-1.48.24 3 3 0 00-2.42-2.42.75.75 0 01-.357-1.06v.001zM2.89 18.117a4.5 4.5 0 013.62-3.62.75.75 0 01.24 1.48 3 3 0 00-2.42 2.42.75.75 0 01-1.357.257A.75.75 0 012.89 18.12z" clip-rule="evenodd"></path></svg>
+                        <span class="nav-text">Reuniões</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#configuracoes" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 01-.517.608 7.5 7.5 0 00-1.842.816.798.798 0 01-.74.037l-.52-.21A1.875 1.875 0 003.622 7.2l.21.52a.798.798 0 01-.036.74 7.5 7.5 0 00-.816 1.842.798.798 0 01-.608.517l-.55.092a1.875 1.875 0 00-1.566 1.849v.344c0 .917.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517a7.5 7.5 0 00.816 1.842.798.798 0 01-.037.74l-.21.52a1.875 1.875 0 002.73 2.731l.52-.21a.798.798 0 01.74.036 7.5 7.5 0 001.842.816.798.798 0 01.517.608l.092.55a1.875 1.875 0 001.849 1.566h.344c.917 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 01.517-.608 7.5 7.5 0 001.842-.816.798.798 0 01.74-.037l.52.21a1.875 1.875 0 002.73-2.731l-.21-.52a.798.798 0 01.036-.74 7.5 7.5 0 00.816-1.842.798.798 0 01.608-.517l.55-.092a1.875 1.875 0 001.566-1.849v-.344c0-.917-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 01-.608-.517 7.5 7.5 0 00-.816-1.842.798.798 0 01.037-.74l.21-.52A1.875 1.875 0 0018.38 5.622l-.52.21a.798.798 0 01-.74-.036 7.5 7.5 0 00-1.842-.816.798.798 0 01-.517-.608l-.092-.55A1.875 1.875 0 0012.922 2.25h-.344zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd"></path></svg>
+                        <span class="nav-text">Configurações</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+             <!-- Dashboard Page -->
+            <section id="dashboard" class="page active">
+                <h1>Dashboard de Inovação</h1>
+                <div id="kpi-cards-container"></div>
+                <div class="grid grid-cols-2">
+                    <div class="card">
+                        <div class="card-header">Projetos por Status</div>
+                        <div class="card-body"><canvas id="projectsByStatusChart"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Projetos por Tipo</div>
+                        <div class="card-body"><canvas id="projectsByTypeChart"></canvas></div>
+                    </div>
+                </div>
+                 <div class="card">
+                    <div class="card-header">Receita e Economia Potencial (Últimos 6 meses)</div>
+                    <div class="card-body"><canvas id="revenueChart"></canvas></div>
+                </div>
+            </section>
+
+             <!-- Projects Internos Page -->
+            <section id="projetos-interno" class="page">
+                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h1>Projetos Internos</h1>
+                    <button class="btn btn-primary action-create-project-interno" data-permission="Gestor de Inovação">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 4a1 1 0 011 1v6h6a1 1 0 110 2h-6v6a1 1 0 11-2 0v-6H5a1 1 0 110-2h6V5a1 1 0 011-1z"></path></svg>
+                        Novo Projeto Interno
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                         <div id="kanban-view-interno"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Other Project Pages -->
+            <section id="projetos-geral" class="page"><h1>Geral (em desenvolvimento)</h1></section>
+            <section id="projetos-externo" class="page"><h1>Externos (em desenvolvimento)</h1></section>
+            <section id="projetos-startups" class="page"><h1>Startups (em desenvolvimento)</h1></section>
+
+            <!-- Meetings Page -->
+            <section id="reunioes" class="page">
+                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <h1>Agendamento de Reuniões</h1>
+                     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-left: auto;">
+                        <div class="filter-container">
+                            <button id="toggle-meeting-filters" class="btn btn-secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd"></path></svg>
+                                <span>Filtros</span>
+                            </button>
+                            <div id="meeting-filters-panel" class="filter-panel">
+                                 <p>Filtros aqui...</p>
+                            </div>
+                        </div>
+                        <div class="view-switcher">
+                            <button id="view-mode-list" class="btn btn-secondary active">Lista</button>
+                            <button id="view-mode-calendar" class="btn btn-secondary">Calendário</button>
+                        </div>
+                        <button class="btn btn-primary action-create-meeting" data-permission="Gestor de Inovação">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 4a1 1 0 011 1v6h6a1 1 0 110 2h-6v6a1 1 0 11-2 0v-6H5a1 1 0 110-2h6V5a1 1 0 011-1z"></path></svg>
+                            Nova Reunião
+                        </button>
+                    </div>
+                </div>
+                <div id="meetings-calendar-container" style="display: none;"></div>
+                <div id="meetings-list-container" class="meetings-list"></div>
+            </section>
+            
+            <!-- Settings Page -->
+            <section id="configuracoes" class="page">
+                <h1>Configurações</h1>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL for Project Form -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Novo Projeto</h3>
+                <button class="close-button" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="project-form" novalidate>
+                 <input type="hidden" id="projectId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="projectTitle">Título</label>
+                        <input type="text" id="projectTitle" class="form-control" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="projectType">Tipo</label>
+                        <select id="projectType" class="form-control" required></select>
+                    </div>
+                     <div class="form-group">
+                        <label for="projectStatus">Status</label>
+                        <select id="projectStatus" class="form-control" required></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- MODAL for Meeting Form -->
+    <div id="meeting-modal" class="modal">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h3 id="meeting-modal-title">Nova Reunião</h3>
+                <button class="close-button" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="meeting-form" novalidate>
+                 <div class="modal-body">
+                    <p>Formulário de reunião aqui...</p>
+                 </div>
+                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
+    
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const App = {
+        state: {
+            currentPage: 'dashboard',
+            projects: [],
+            meetings: [],
+            kpiStatusMap: {
+                planning: ['Ideação', 'Em Análise', 'Ideia', 'Pré Avaliação', 'Avaliação', 'Planejamento'],
+                ongoing: ['Em Execução', 'Reestruturação', 'Desenvolvimento'],
+                completed: ['Concluído', 'Finalizado']
+            },
+        },
+
+        elements: {
+            sidebar: document.getElementById('sidebar'),
+            sidebarToggleBtn: document.getElementById('sidebar-toggle-btn'),
+            navLinks: document.querySelectorAll('.nav-link'),
+            pages: document.querySelectorAll('.page'),
+        },
+
+        init() {
+            this.loadState();
+            this.initEventListeners();
+            this.navigateTo('dashboard');
+        },
+
+        loadState() {
+            const savedState = localStorage.getItem('sgiLigaState');
+            if (savedState) {
+                this.state = JSON.parse(savedState);
+            } else {
+                this.initMockData();
+            }
+        },
+
+        saveState() {
+            localStorage.setItem('sgiLigaState', JSON.stringify(this.state));
+        },
+
+        initMockData() {
+            this.state.projects = [
+                { id: 'PROJ-001', title: 'Otimização de Fluxo', type: 'Interno', status: 'Desenvolvimento' },
+                { id: 'PROJ-002', title: 'Plataforma de Telemedicina', type: 'Externo', status: 'Concluído' },
+                { id: 'PROJ-003', title: 'IA para Detecção Precoce', type: 'Startup', status: 'Em Análise' },
+                { id: 'PROJ-004', title: 'Gamificação no Treinamento', type: 'Interno', status: 'Ideia' },
+                { id: 'PROJ-005', title: 'Análise Preditiva de Leitos', type: 'Interno', status: 'Planejamento' },
+            ];
+            this.saveState();
+        },
+        
+        initEventListeners() {
+            this.elements.sidebarToggleBtn.addEventListener('click', () => {
+                document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
+                this.elements.sidebar.classList.toggle('is-open');
+            });
+            
+            document.querySelector('.sidebar-nav').addEventListener('click', e => {
+                const link = e.target.closest('.nav-link');
+                if (!link) return;
+                e.preventDefault();
+                if (link.classList.contains('nav-parent')) {
+                    link.parentElement.classList.toggle('open');
+                    return;
+                }
+                const pageId = link.getAttribute('href').substring(1);
+                this.navigateTo(pageId);
+            });
+            
+            document.addEventListener('click', e => {
+                if(e.target.matches('.action-create-project-interno')) {
+                    this.openProjectModal(null, 'Interno');
+                }
+                if (e.target.matches('[data-dismiss="modal"]')) {
+                    e.target.closest('.modal').classList.remove('is-visible');
+                }
+            });
+
+            document.getElementById('project-form').addEventListener('submit', e => {
+                e.preventDefault();
+                this.handleProjectFormSubmit();
+            });
+        },
+
+        navigateTo(pageId) {
+            this.state.currentPage = pageId;
+            this.elements.pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId)?.classList.add('active');
+
+            this.elements.navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${pageId}`) {
+                    link.classList.add('active');
+                    const parentLi = link.closest('.submenu')?.parentElement;
+                    if (parentLi) parentLi.classList.add('open');
+                }
+            });
+
+            if (pageId.startsWith('projetos-')) {
+                 document.querySelector('#nav-projetos .nav-link').classList.add('active');
+            }
+
+            this.renderPage();
+        },
+        
+        renderPage() {
+            switch(this.state.currentPage) {
+                case 'dashboard':
+                    this.renderDashboard();
+                    break;
+                case 'projetos-interno':
+                    this.renderProjetosPorTipo('Interno');
+                    break;
+            }
+        },
+
+        renderDashboard() {
+            this.renderKpiCards();
+            this.renderCharts();
+        },
+
+        renderKpiCards() {
+            const container = document.getElementById('kpi-cards-container');
+            const projects = this.state.projects;
+
+            const kpis = [
+                { value: projects.filter(p => p.type === 'Interno').length, label: 'Projetos Internos' },
+                { value: projects.filter(p => p.type === 'Externo').length, label: 'Projetos Externos' },
+                { value: projects.filter(p => p.type === 'Startup').length, label: 'Startups' },
+                { value: projects.length, label: 'Ideias Geradas' },
+                { value: 'R$ 1.2M', label: 'Receita Potencial' },
+                { value: 'R$ 450k', label: 'Economia Estimada' },
+                { value: projects.filter(p => this.state.kpiStatusMap.planning.includes(p.status)).length, label: 'Em Planejamento' },
+                { value: projects.filter(p => this.state.kpiStatusMap.ongoing.includes(p.status)).length, label: 'Em Andamento' },
+                { value: 2, label: 'Patentes' },
+            ];
+
+            const kpiHtml = kpis.map(kpi => `
+                <div class="card kpi-card">
+                    <div class="card-body">
+                        <div class="kpi-value">${kpi.value}</div>
+                        <div class="kpi-label">${kpi.label}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="grid grid-cols-3">${kpiHtml}</div>`;
+        },
+
+        charts: {},
+        renderCharts() {
+            const statusCounts = this.state.projects.reduce((acc, p) => {
+                acc[p.status] = (acc[p.status] || 0) + 1; return acc;
+            }, {});
+            this.renderChart('projectsByStatusChart', 'bar', {
+                labels: Object.keys(statusCounts),
+                datasets: [{ data: Object.values(statusCounts), backgroundColor: '#0077b6' }]
+            });
+            
+            const typeCounts = this.state.projects.reduce((acc, p) => {
+                acc[p.type] = (acc[p.type] || 0) + 1; return acc;
+            }, {});
+            this.renderChart('projectsByTypeChart', 'doughnut', {
+                labels: Object.keys(typeCounts),
+                datasets: [{ data: Object.values(typeCounts), backgroundColor: ['#0077b6', '#00b4d8', '#ade8f4'] }]
+            });
+            
+            this.renderChart('revenueChart', 'line', {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr'],
+                datasets: [{ label: 'Receita', data: [50, 75, 120, 110], borderColor: '#0077b6' }]
+            });
+        },
+        
+        renderChart(canvasId, type, data) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            if (this.charts[canvasId]) this.charts[canvasId].destroy();
+            this.charts[canvasId] = new Chart(ctx, { type, data, options: { plugins: { legend: { display: false } } } });
+        },
+
+        renderProjetosPorTipo(type) {
+            const projects = this.state.projects.filter(p => p.type === type);
+            const board = document.getElementById(`kanban-view-${type.toLowerCase()}`);
+            
+            const columns = ['Ideia', 'Pré Avaliação', 'Avaliação', 'Planejamento', 'Reestruturação', 'Desenvolvimento', 'Em pausa', 'Finalizado', 'Arquivado'];
+            
+            board.className = 'kanban-board-scrollable';
+            board.style.gridTemplateColumns = `repeat(${columns.length}, 280px)`;
+            
+            board.innerHTML = columns.map(col => {
+                const cardsInColumn = projects.filter(p => p.status === col);
+                return `
+                    <div class="kanban-column" data-status="${col}">
+                        <div class="kanban-column-header">
+                            <span>${col}</span>
+                            <span>${cardsInColumn.length}</span>
+                        </div>
+                        <div class="kanban-cards">
+                            ${cardsInColumn.map(p => this.getKanbanCardHtml(p)).join('')}
+                        </div>
+                    </div>`;
+            }).join('');
+        },
+
+        getKanbanCardHtml(project) {
+             return `<div class="kanban-card" draggable="true" data-id="${project.id}">
+                        <div class="kanban-card-title">${project.title}</div>
+                        <div class="kanban-card-meta">${project.id}</div>
+                    </div>`;
+        },
+
+        openProjectModal(projectId = null, defaultType = null) {
+            const modal = document.getElementById('project-modal');
+            const form = document.getElementById('project-form');
+            form.reset();
+            const typeSelect = document.getElementById('projectType');
+            
+            const internalStatuses = ['Ideia', 'Pré Avaliação', 'Avaliação', 'Planejamento', 'Reestruturação', 'Desenvolvimento', 'Em pausa', 'Finalizado', 'Arquivado'];
+            const otherStatuses = ['Ideação', 'Em Análise', 'Em Execução', 'Concluído', 'Cancelado'];
+            
+            typeSelect.innerHTML = ['Interno', 'Externo', 'Startup'].map(t => `<option value="${t}">${t}</option>`).join('');
+            
+            const populateStatuses = (type) => {
+                const statusSelect = document.getElementById('projectStatus');
+                statusSelect.innerHTML = (type === 'Interno' ? internalStatuses : otherStatuses).map(s => `<option value="${s}">${s}</option>`).join('');
+            };
+
+            typeSelect.value = defaultType || 'Interno';
+            typeSelect.disabled = !!defaultType;
+            populateStatuses(typeSelect.value);
+            typeSelect.onchange = () => populateStatuses(typeSelect.value);
+
+            modal.classList.add('is-visible');
+        },
+
+        handleProjectFormSubmit() {
+            const projectData = {
+                id: 'PROJ-' + String(Date.now()).slice(-4),
+                title: document.getElementById('projectTitle').value,
+                type: document.getElementById('projectType').value,
+                status: document.getElementById('projectStatus').value,
+            };
+            this.state.projects.push(projectData);
+            this.saveState();
+            this.renderPage();
+            this.showToast('Projeto criado com sucesso!', 'success');
+            document.getElementById('project-modal').classList.remove('is-visible');
+        },
+
+        showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    };
+
+    App.init();
+});
+</script>
+</body>
+</html>
