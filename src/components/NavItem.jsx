@@ -1,10 +1,12 @@
-export default function NavItem({ children, Icon, active }) {
+import { Link } from "react-router-dom"
+
+export default function NavItem({ children, Icon, active, to }) {
   return (
     <li className="nav-item">
-      <a className={active ? 'active' : ''}>
+      <Link to={to} className={active ? 'active' : ''}>
         <span className="nav-icon-container"><Icon className="nav-icon" /></span>
         <span>{children}</span>
-      </a>
+      </Link>
     </li>
   )
 }

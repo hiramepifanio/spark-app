@@ -12,10 +12,10 @@ export default function Sidebar() {
         <h1>SPARK</h1>
       </div>
       <Nav>
-        <NavItem active Icon={MdDashboard}>Dashboard</NavItem>
-        <NavItem Icon={MdViewKanban}>Projects</NavItem>
-        <NavItem Icon={IoIosPeople}>Meetings</NavItem>
-        <NavItem Icon={FaGear}>Configurations</NavItem>
+        <NavItem to='/' active Icon={MdDashboard}>Dashboard</NavItem>
+        <NavItem to='/projects' Icon={MdViewKanban}>Projects</NavItem>
+        <NavItem to='/meetings' Icon={IoIosPeople}>Meetings</NavItem>
+        <NavItem to='/settings' Icon={FaGear}>Settings</NavItem>
       </Nav>
     </aside>
   )
