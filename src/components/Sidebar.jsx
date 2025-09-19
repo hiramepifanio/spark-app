@@ -7,11 +7,12 @@ import Nav from "./Nav"
 import SidebarHeader from "./SidebarHeader"
 
 export default function Sidebar() {
+
   return (
     <aside id="sidebar">
       <SidebarHeader>Spark</SidebarHeader>
       <Nav>
-        <NavItem to='/' active Icon={MdDashboard}>Dashboard</NavItem>
+        <NavItem to='/' Icon={MdDashboard}>Dashboard</NavItem>
         <NavItem to='/projects' Icon={MdViewKanban}>Projects</NavItem>
         <NavItem to='/meetings' Icon={IoIosPeople}>Meetings</NavItem>
         <NavItem to='/settings' Icon={FaGear}>Settings</NavItem>
