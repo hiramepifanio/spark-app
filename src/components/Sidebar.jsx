@@ -4,13 +4,12 @@ import { IoIosPeople } from "react-icons/io"
 import { FaGear } from "react-icons/fa6"
 import NavItem from "./NavItem"
 import Nav from "./Nav"
+import SidebarHeader from "./SidebarHeader"
 
 export default function Sidebar() {
   return (
     <aside id="sidebar">
-      <div className="sidebar-header">
-        <h1>SPARK</h1>
-      </div>
+      <SidebarHeader>Spark</SidebarHeader>
       <Nav>
         <NavItem to='/' active Icon={MdDashboard}>Dashboard</NavItem>
         <NavItem to='/projects' Icon={MdViewKanban}>Projects</NavItem>

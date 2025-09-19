@@ -53,13 +53,6 @@ body {
     grid-area: sidebar;
 }
 
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    height: 60px;
-    justify-content: center;
-}
-
 #nav {
     margin: 1rem 0;
 }
