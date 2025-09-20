@@ -2,9 +2,9 @@ import { MdDashboard } from "react-icons/md"
 import { MdViewKanban } from "react-icons/md"
 import { IoIosPeople } from "react-icons/io"
 import { FaGear } from "react-icons/fa6"
-import NavItem from "./NavItem"
-import Nav from "./Nav"
-import SidebarHeader from "./SidebarHeader"
+import NavItem from "../NavItem/NavItem"
+import Nav from "../Nav/Nav"
+import SidebarHeader from "../SidebarHeader/SidebarHeader"
 
 export default function Sidebar() {
 
