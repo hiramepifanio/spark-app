@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom"
-import Sidebar from './components/Sidebar'
-import DashboardPage from './components/DashboardPage'
-import ProjectsPage from './components/ProjectsPage'
-import MeetingsPage from './components/MeetingsPage'
-import SettingsPage from './components/SettingsPage'
+import Sidebar from './components/Sidebar/Sidebar'
+import DashboardPage from './pages/DashboardPage/DashboardPage'
+import ProjectsPage from './pages/ProjectsPage/ProjectsPage'
+import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
+import SettingsPage from './pages/SettingsPage/SettingsPage'
 
 function App() {
   return (
