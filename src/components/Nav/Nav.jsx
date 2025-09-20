@@ -1,6 +1,8 @@
+import styles from './Nav.module.css'
+
 export default function Nav({ children }) {
   return (
-    <ul id="nav">
+    <ul className={styles.nav}>
       {children}
     </ul>
   )

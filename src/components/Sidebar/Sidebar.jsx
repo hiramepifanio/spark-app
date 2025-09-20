@@ -1,3 +1,4 @@
+import styles from './Sidebar.module.css'
 import { MdDashboard } from "react-icons/md"
 import { MdViewKanban } from "react-icons/md"
 import { IoIosPeople } from "react-icons/io"
@@ -9,7 +10,7 @@ import SidebarHeader from "../SidebarHeader/SidebarHeader"
 export default function Sidebar() {
 
   return (
-    <aside id="sidebar">
+    <aside className={styles.sidebar}>
       <SidebarHeader>Spark</SidebarHeader>
       <Nav>
         <NavItem to='/' Icon={MdDashboard}>Dashboard</NavItem>

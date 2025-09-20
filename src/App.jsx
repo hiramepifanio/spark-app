@@ -4,10 +4,11 @@ import DashboardPage from './pages/DashboardPage/DashboardPage'
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage'
 import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
+import styles from './App.module.css'
 
 function App() {
   return (
-    <div id='app-container'>
+    <div className={styles.container}>
       <Sidebar />
       <main>
         <Routes>
