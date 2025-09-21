@@ -1,0 +1,9 @@
+.container {
+    display: flex;
+    align-items: center;
+    height: 70px;
+}
+
+.selected {
+    border-bottom: 2px solid var(--color-gray-900);
+}

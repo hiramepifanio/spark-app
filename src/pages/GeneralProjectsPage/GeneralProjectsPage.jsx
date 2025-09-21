@@ -1,7 +1,14 @@
 import styles from './GeneralProjectsPage.module.css'
+import PageTitle from '../../components/PageTitle/PageTitle'
+import ViewMenu from '../../components/ViewMenu/ViewMenu'
 
 export default function GeneralProjectsPage() {
   return (
-    <h1>General Projects</h1>
+    <>
+      <PageTitle>General Projects</PageTitle>
+      <section>
+        <ViewMenu />
+      </section>
+    </>
   )
 }
