@@ -26,7 +26,7 @@ export default function ViewMenu() {
       <div className={styles.actionsContainer}>
         <SearchBar />
         <Button><Label Icon={FaFilter}>Filter</Label></Button>
-        <Button><Label Icon={FaPlus}>New Project</Label></Button>
+        <Button isFilled><Label Icon={FaPlus}>New Project</Label></Button>
       </div>
     </menu>
   )
