@@ -8,12 +8,13 @@ import StartupProjectsPage from './pages/StartupProjectsPage/StartupProjectsPage
 import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
 import styles from './App.module.css'
+import Main from "./components/Main/Main"
 
 function App() {
   return (
     <div className={styles.container}>
       <Sidebar />
-      <main>
+      <Main>
         <Routes>
           <Route path='/dashboard' element={<DashboardPage />} />
           <Route path='/projects'>
@@ -25,7 +26,7 @@ function App() {
           <Route path='/meetings' element={<MeetingsPage />} />
           <Route path='/settings' element={<SettingsPage />} />
         </Routes>
-      </main>
+      </Main>
     </div>
   )
 }
