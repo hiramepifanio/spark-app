@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import Sidebar from './components/Sidebar/Sidebar'
 import DashboardPage from './pages/DashboardPage/DashboardPage'
 import GeneralProjectsPage from './pages/GeneralProjectsPage/GeneralProjectsPage'
@@ -16,6 +16,7 @@ function App() {
       <Sidebar />
       <Main>
         <Routes>
+          <Route path='/' element={<Navigate to='/dashboard' replace />} />
           <Route path='/dashboard' element={<DashboardPage />} />
           <Route path='/projects'>
             <Route path='general' element={<GeneralProjectsPage />} />
