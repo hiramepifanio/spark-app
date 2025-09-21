@@ -1,5 +1,7 @@
+import PageTitle from "../../components/PageTitle/PageTitle";
+
 export default function DashboardPage() {
   return (
-    <h1>Dashboard</h1>
+    <PageTitle>Inovation Dashboard</PageTitle>
   )
 }
