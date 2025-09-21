@@ -9,7 +9,7 @@ export default function Topbar() {
   return (
     <header className={styles.topbar}>
       <div className={styles.left}>
-        <Button >Ask AI</Button>
+        <Button isFilled>Ask AI</Button>
       </div>
       <div className={styles.center}>
         <SearchBar />
