@@ -4,6 +4,10 @@
     height: 70px;
 }
 
+.notSelected {
+    color: var(--color-gray-600);
+}
+
 .selected {
     border-bottom: 2px solid var(--color-gray-900);
 }
