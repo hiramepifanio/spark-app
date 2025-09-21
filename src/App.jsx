@@ -9,11 +9,13 @@ import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
 import styles from './App.module.css'
 import Main from "./components/Main/Main"
+import Topbar from "./components/Topbar/Topbar"
 
 function App() {
   return (
     <div className={styles.container}>
       <Sidebar />
+      <Topbar />
       <Main>
         <Routes>
           <Route path='/' element={<Navigate to='/dashboard' replace />} />
