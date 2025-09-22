@@ -2,10 +2,15 @@
     display: flex;
     align-items: center;
     height: 70px;
+    transition: color 0.2s;
 }
 
 .notSelected {
     color: var(--color-gray-600);
+}
+
+.notSelected:hover {
+    color: var(--color-gray-800);
 }
 
 .selected {

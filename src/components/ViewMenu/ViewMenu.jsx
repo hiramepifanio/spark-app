@@ -8,20 +8,38 @@ import { MdViewTimeline } from "react-icons/md"
 import { FaListAlt } from "react-icons/fa"
 import { FaFilter } from "react-icons/fa6"
 import { FaPlus } from "react-icons/fa6"
+import { useState } from 'react'
+
+const views = [
+  {
+    label: 'List',
+    icon: FaListAlt
+  },
+  {
+    label: 'Kanban',
+    icon: MdViewKanban
+  },
+  {
+    label: 'Timeline',
+    icon: MdViewTimeline
+  },
+]
 
 export default function ViewMenu() {
+  const [ selectedView, setSelectedView ] = useState('List');
+
+  function onClickViewMenuItem(label) {
+    setSelectedView(label);
+  }
+
   return (
     <menu className={styles.menu}>
       <div className={styles.viewsContainer}>
-        <ViewMenuItem>
-          <Label Icon={MdViewKanban}>Kanban</Label>
-        </ViewMenuItem>
-        <ViewMenuItem isSelected>
-          <Label Icon={MdViewTimeline}>Timeline</Label>
-        </ViewMenuItem>
-        <ViewMenuItem>
-          <Label Icon={FaListAlt}>List</Label>
-        </ViewMenuItem>
+        {views.map(view => (
+          <ViewMenuItem onClick={() => onClickViewMenuItem(view.label)} isSelected={selectedView === view.label}>
+            <Label Icon={view.icon}>{view.label}</Label>
+          </ViewMenuItem>
+        ))}
       </div>
       <div className={styles.actionsContainer}>
         <SearchBar />
