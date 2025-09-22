@@ -1,9 +1,9 @@
 import Icon from '../Icon/Icon'
-import styles from './ListViewGroupHeader.module.css'
+import styles from './ListViewHeader.module.css'
 import { FaAngleDown } from "react-icons/fa"
 import { FaPlus } from "react-icons/fa6"
 
-export default function ListViewGroupHeader({ children, count }) {
+export default function ListViewHeader({ children, count }) {
   return (
     <div className={styles.container}>
       <div className={styles.left}>
