@@ -51,7 +51,7 @@ const projects = [
   {
     "name": "SmartBridge Safety",
     "startedAt": "04-2023",
-    "finishedAt": "09-2023",
+    "finishedAt": null,
     "funding": 75000,
     "stage": "Avaliation",
     "description": "Pilot system for monitoring bridge vibrations and structural safety."
@@ -83,7 +83,7 @@ const projects = [
   {
     "name": "Urban Mobility Platform",
     "startedAt": "10-2022",
-    "finishedAt": "05-2023",
+    "finishedAt": null,
     "funding": 300000,
     "stage": "Restructuring",
     "description": "Pivoting transport-sharing platform after initial user feedback."

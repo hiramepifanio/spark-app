@@ -5,6 +5,11 @@ export default function ListViewTable({ data, columns }) {
   const table = useReactTable({
     data,
     columns,
+    state: {
+      columnVisibility: {
+        finishedAt: false
+      }
+    },
     getCoreRowModel: getCoreRowModel()
   })
 
