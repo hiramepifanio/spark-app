@@ -12,7 +12,7 @@ export default function Topbar() {
         <Button isFilled>Ask AI</Button>
       </div>
       <div className={styles.center}>
-        <SearchBar />
+        <SearchBar placeholder='Search documents, tasks or anything...'/>
       </div>
       <div className={styles.right}>
         <Icon isClickable Content={FaBell} />

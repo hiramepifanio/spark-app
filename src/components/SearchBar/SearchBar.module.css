@@ -1,12 +1,25 @@
-.searchBar {
+.searchBarContainer {
     width: 100%;
     max-width: 600px;
-    padding: 0.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.iconContainer {
+    position: absolute;
+    left: 0.9rem;
+}
+
+.searchBar {
+    width: 100%;
+    padding-left: 36px;
     border-radius: 6px;
     border: 1px solid var(--color-gray-200);
     box-shadow: var(--shadow-sm);
     border-radius: 1.5rem;
-    padding: 0.75rem 1.5rem;
+    padding: 0.60rem 1.2rem;
+    padding-left: 2.5rem;
 }
 
 .searchBar:focus {
