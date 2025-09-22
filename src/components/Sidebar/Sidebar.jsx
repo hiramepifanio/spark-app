@@ -23,16 +23,16 @@ export default function Sidebar() {
         <NavItem to='/dashboard' Icon={MdDashboard}>Dashboard</NavItem>
         <NavItem onClick={handleProjectsNavItemClick} to='/projects' Icon={MdViewKanban} submenu={
           <NavSubmenu isOpen={isSubmenuOpen}>
-            <NavItem to='/projects/general' isSubitem>General</NavItem>
-            <NavItem to='/projects/internal' isSubitem>Internal Projects</NavItem>
-            <NavItem to='/projects/external' isSubitem>External Projects</NavItem>
+            <NavItem to='/projects/general' isSubitem>Projetos Gerais</NavItem>
+            <NavItem to='/projects/internal' isSubitem>Projetos Internos</NavItem>
+            <NavItem to='/projects/external' isSubitem>Projetos Externos</NavItem>
             <NavItem to='/projects/startups' isSubitem>Startups</NavItem>
           </NavSubmenu>
         }>
-          Projects
+          Projetos
         </NavItem>
-        <NavItem to='/meetings' Icon={IoIosPeople}>Meetings</NavItem>
-        <NavItem to='/settings' Icon={FaGear}>Settings</NavItem>
+        <NavItem to='/meetings' Icon={IoIosPeople}>Reuniões</NavItem>
+        <NavItem to='/settings' Icon={FaGear}>Configurações</NavItem>
       </Nav>
     </aside>
   )

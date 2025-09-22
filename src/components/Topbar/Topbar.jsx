@@ -9,10 +9,10 @@ export default function Topbar() {
   return (
     <header className={styles.topbar}>
       <div className={styles.left}>
-        <Button isFilled>Ask AI</Button>
+        <Button isFilled>Pergunte à IA</Button>
       </div>
       <div className={styles.center}>
-        <SearchBar placeholder='Search documents, tasks or anything...'/>
+        <SearchBar placeholder='Busque documentos, tarefas ou qualquer coisa...'/>
       </div>
       <div className={styles.right}>
         <Icon isClickable Content={FaBell} />

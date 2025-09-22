@@ -12,7 +12,7 @@ import { useState } from 'react'
 
 const views = [
   {
-    label: 'List',
+    label: 'Lista',
     icon: FaListAlt
   },
   {
@@ -20,7 +20,7 @@ const views = [
     icon: MdViewKanban
   },
   {
-    label: 'Timeline',
+    label: 'Linha do Tempo',
     icon: MdViewTimeline
   },
 ]
@@ -42,9 +42,9 @@ export default function ProjectsViewMenu() {
         ))}
       </div>
       <div className={styles.actionsContainer}>
-        <SearchBar />
-        <Button><Label Icon={FaFilter}>Filter</Label></Button>
-        <Button isFilled><Label Icon={FaPlus}>New Project</Label></Button>
+        <SearchBar placeholder='Busque em projetos...'/>
+        <Button><Label Icon={FaFilter}>Filtrar</Label></Button>
+        <Button isFilled><Label Icon={FaPlus}>Novo Projeto</Label></Button>
       </div>
     </menu>
   )

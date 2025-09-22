@@ -6,7 +6,7 @@ import ProjectsListView from '../../components/ProjectsListView/ProjectsListView
 export default function GeneralProjectsPage() {
   return (
     <>
-      <PageTitle>General Projects</PageTitle>
+      <PageTitle>Projetos Gerais</PageTitle>
       <section>
         <ProjectsViewMenu />
         <ProjectsListView />

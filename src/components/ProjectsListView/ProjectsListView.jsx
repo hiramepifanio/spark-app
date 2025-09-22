@@ -4,12 +4,12 @@ import { projects } from '../../data/projects'
 import { stages } from '../../data/stages'
 
 const columns = [
-  { accessorKey: "name", header: "Name", size: 2 },
-  { accessorKey: "description", header: "Description", size: 3 },
-  { accessorKey: "funding", header: "Funding (USD)", size: 1 },
-  { accessorKey: "stage", header: "Stage", size: 1 },
-  { accessorKey: "startedAt", header: "Started At", size: 1 },
-  { accessorKey: "finishedAt", header: "Finished At", size: 1 },
+  { accessorKey: "name", header: "Nome", size: 2 },
+  { accessorKey: "description", header: "Descrição", size: 3 },
+  { accessorKey: "funding", header: "Fundos (R$)", size: 1 },
+  { accessorKey: "stage", header: "Estágio", size: 1 },
+  { accessorKey: "startedAt", header: "Começou Em", size: 1 },
+  { accessorKey: "finishedAt", header: "Finalizou Em", size: 1 },
 ]
 
 export default function ProjectsListView() {

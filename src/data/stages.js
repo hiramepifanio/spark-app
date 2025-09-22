@@ -1,11 +1,11 @@
 export const stages = [
-  'Ideation', 
-  'Pre-Avaliation', 
-  'Avaliation', 
-  'Planning', 
-  'Restructuring', 
-  'Development', 
-  'Paused', 
-  'Finished', 
-  'Archived'
+  'Ideia', 
+  'Pré-Avaliação', 
+  'Avaliação', 
+  'Planejamento', 
+  'Reestruturação', 
+  'Desenvolvimento', 
+  'Em pausa', 
+  'Finalizado', 
+  'Arquivado'
 ]
