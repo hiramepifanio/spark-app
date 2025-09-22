@@ -2,7 +2,7 @@ import ViewMenuItem from '../ViewMenuItem/ViewMenuItem'
 import Label from '../Label/Label'
 import SearchBar from '../SearchBar/SearchBar'
 import Button from '../Button/Button'
-import styles from './ViewMenu.module.css'
+import styles from './ProjectsViewMenu.module.css'
 import { MdViewKanban } from "react-icons/md"
 import { MdViewTimeline } from "react-icons/md"
 import { FaListAlt } from "react-icons/fa"
@@ -25,7 +25,7 @@ const views = [
   },
 ]
 
-export default function ViewMenu() {
+export default function ProjectsViewMenu() {
   const [ selectedView, setSelectedView ] = useState('List');
 
   function onClickViewMenuItem(label) {
