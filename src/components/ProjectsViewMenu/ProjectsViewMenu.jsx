@@ -36,7 +36,7 @@ export default function ProjectsViewMenu() {
     <menu className={styles.menu}>
       <div className={styles.viewsContainer}>
         {views.map(view => (
-          <ViewMenuItem onClick={() => onClickViewMenuItem(view.label)} isSelected={selectedView === view.label}>
+          <ViewMenuItem key={view.label} onClick={() => onClickViewMenuItem(view.label)} isSelected={selectedView === view.label}>
             <Label Icon={view.icon}>{view.label}</Label>
           </ViewMenuItem>
         ))}
