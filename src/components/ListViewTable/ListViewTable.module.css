@@ -1,0 +1,18 @@
+.tableRow {
+    display: flex;
+    border: 1px solid var(--color-gray-200);
+}
+
+.tableBodyRow:last-child {
+    border-radius: 0 0 10px 10px;
+}
+
+.tableItem {
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.tableHeadItem {
+    color: var(--color-gray-600);
+}
