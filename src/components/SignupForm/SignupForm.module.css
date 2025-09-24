@@ -2,11 +2,3 @@
     display: flex;
     gap: 1rem;
 }
-
-.footer {
-    margin-top: 2rem;
-}
-
-.link {
-    color: var(--color-primary);
-}

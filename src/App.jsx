@@ -8,11 +8,13 @@ import StartupProjectsPage from './pages/StartupProjectsPage/StartupProjectsPage
 import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
 import SignupPage from './pages/SignupPage/SignupPage'
+import LoginPage from './pages/LoginPage/LoginPage'
 
 function App() {
   return (
     <Routes>
       <Route path='/signup' element={<SignupPage />} />
+      <Route path='/login' element={<LoginPage />} />
       <Route element={<Layout />}>
         <Route path='/' element={<Navigate to='/dashboard' replace />} />
         <Route path='/dashboard' element={<DashboardPage />} />

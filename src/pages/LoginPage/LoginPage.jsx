@@ -1,11 +1,11 @@
-import SignupForm from '../../components/SignupForm/SignupForm'
+import LoginForm from '../../components/LoginForm/LoginForm'
 import LoginAndSignupPageLayout from '../../components/LoginAndSignupPageLayout/LoginAndSignupPageLayout'
-import styles from './SignupPage.module.css'
+import styles from './LoginPage.module.css'
 
-export default function SignupPage() {
+export default function LoginPage() {
   return (
     <LoginAndSignupPageLayout>
-      <SignupForm />
+      <LoginForm />
     </LoginAndSignupPageLayout>
   )
 }

@@ -1,4 +1,4 @@
-import styles from './SignupForm.module.css'
+import styles from './LoginForm.module.css'
 import Form from '../../components/Form/Form'
 import Button from '../../components/Button/Button'
 import { Link } from 'react-router-dom'
@@ -6,7 +6,7 @@ import TextInput from '../../components/TextInput/TextInput'
 import { useState } from 'react'
 import LoginAndSignupFormFooter from '../LoginAndSignupFormFooter/LoginAndSignupFormFooter'
 
-export default function SignupForm() {
+export default function LoginForm() {
   const [errors, setErrors] = useState({})
 
   function handleSubmit(event) {
@@ -26,19 +26,14 @@ export default function SignupForm() {
 
   return (
     <Form 
-      title='Crie uma conta'
+      title='Bem-vindo de Volta!'
       subtitle='Gerencie seus projetos de inovação de forma intuitiva.'
       onSubmit={handleSubmit}
     >
-      <div className={styles.fistNameAndLastNameFieldsContainer}>
-        <TextInput id='firstName' label='Nome' placeholder='Informe seu nome...' required minLength={3} maxLength={50} error={errors.firstName}/>
-        <TextInput id='lastName' label='Sobrenome' placeholder='Informe seu sobrenome...' required minLength={3} error={errors.lastName}/>
-      </div>
       <TextInput id='email' label='email' placeholder='Informe seu email...' type='email' required error={errors.email}/>
       <TextInput id='password' label='Senha' placeholder='Informe seu senha...' type='password' required minLength={3} error={errors.password}/>
-      <TextInput id='passwordConfirmation' label='Confirmação de senha' placeholder='Informe seu senha novamente...' type='password' required minLength={3} error={errors.passwordConfirmation}/>
-      <Button isFilled>Cadastrar</Button>
-      <LoginAndSignupFormFooter text='Já possui cadastro?' redirectPath='/login' callToAction='Entrar'/>
+      <Button isFilled>Entrar</Button>
+      <LoginAndSignupFormFooter text='Não possui cadastro?' redirectPath='/signup' callToAction='Cadastrar'/>
     </Form>
   )
 }
