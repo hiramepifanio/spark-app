@@ -2,7 +2,7 @@ import styles from './SignupForm.module.css'
 import Form from '../../components/Form/Form'
 import Button from '../../components/Button/Button'
 import { Link } from 'react-router-dom'
-import TextInput from '../../components/TextInput/TextInput'
+import Input from '../../components/Input/Input'
 import { useState } from 'react'
 import LoginAndSignupFormFooter from '../LoginAndSignupFormFooter/LoginAndSignupFormFooter'
 
@@ -31,12 +31,12 @@ export default function SignupForm() {
       onSubmit={handleSubmit}
     >
       <div className={styles.fistNameAndLastNameFieldsContainer}>
-        <TextInput id='firstName' label='Nome' placeholder='Informe seu nome...' required minLength={3} maxLength={50} error={errors.firstName}/>
-        <TextInput id='lastName' label='Sobrenome' placeholder='Informe seu sobrenome...' required minLength={3} error={errors.lastName}/>
+        <Input id='firstName' name='firstName' type='text' label='Nome' placeholder='Informe seu nome...' required minLength={3} maxLength={50} error={errors.firstName}/>
+        <Input id='lastName' name='lastName' type='text' label='Sobrenome' placeholder='Informe seu sobrenome...' required minLength={3} error={errors.lastName}/>
       </div>
-      <TextInput id='email' label='email' placeholder='Informe seu email...' type='email' required error={errors.email}/>
-      <TextInput id='password' label='Senha' placeholder='Informe seu senha...' type='password' required minLength={3} error={errors.password}/>
-      <TextInput id='passwordConfirmation' label='Confirmação de senha' placeholder='Informe seu senha novamente...' type='password' required minLength={3} error={errors.passwordConfirmation}/>
+      <Input id='email' name='email' label='email' placeholder='Informe seu email...' type='email' required error={errors.email}/>
+      <Input id='password' name='password' label='Senha' placeholder='Informe seu senha...' type='password' required minLength={3} error={errors.password}/>
+      <Input id='passwordConfirmation' name='passwordConfirmation' label='Confirmação de senha' placeholder='Informe seu senha novamente...' type='password' required minLength={3} error={errors.passwordConfirmation}/>
       <Button isFilled>Cadastrar</Button>
       <LoginAndSignupFormFooter text='Já possui cadastro?' redirectPath='/login' callToAction='Entrar'/>
     </Form>

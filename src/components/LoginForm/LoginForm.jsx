@@ -2,7 +2,7 @@ import styles from './LoginForm.module.css'
 import Form from '../../components/Form/Form'
 import Button from '../../components/Button/Button'
 import { Link } from 'react-router-dom'
-import TextInput from '../../components/TextInput/TextInput'
+import Input from '../Input/Input'
 import { useState } from 'react'
 import LoginAndSignupFormFooter from '../LoginAndSignupFormFooter/LoginAndSignupFormFooter'
 
@@ -30,8 +30,8 @@ export default function LoginForm() {
       subtitle='Gerencie seus projetos de inovação de forma intuitiva.'
       onSubmit={handleSubmit}
     >
-      <TextInput id='email' label='email' placeholder='Informe seu email...' type='email' required error={errors.email}/>
-      <TextInput id='password' label='Senha' placeholder='Informe seu senha...' type='password' required minLength={3} error={errors.password}/>
+      <Input id='email' name='email' label='email' placeholder='Informe seu email...' type='email' required error={errors.email}/>
+      <Input id='password' name='password' label='Senha' placeholder='Informe seu senha...' type='password' required minLength={3} error={errors.password}/>
       <Button isFilled>Entrar</Button>
       <LoginAndSignupFormFooter text='Não possui cadastro?' redirectPath='/signup' callToAction='Cadastrar'/>
     </Form>
