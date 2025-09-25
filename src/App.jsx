@@ -11,13 +11,16 @@ import SignupPage from './pages/SignupPage/SignupPage'
 import LoginPage from './pages/LoginPage/LoginPage'
 import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute"
+import UnauthenticatedRoute from "./components/UnauthenticatedRoute/UnauthenticatedRoute"
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path='/signup' element={<SignupPage />} />
-        <Route path='/login' element={<LoginPage />} />
+        <Route element={<UnauthenticatedRoute />}>
+          <Route path='/signup' element={<SignupPage />} />
+          <Route path='/login' element={<LoginPage />} />
+        </Route>
 
         <Route element={<PrivateRoute />}>
           <Route element={<Layout />}>
