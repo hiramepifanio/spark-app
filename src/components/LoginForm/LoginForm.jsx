@@ -12,19 +12,41 @@ export default function LoginForm() {
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+
+    setErrors({})
 
     const formData = new FormData(event.target)
     const { email, password } = Object.fromEntries(formData.entries())
 
+    const res = await fetch('http://localhost:8000/api/token/', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    })
+
+    const resData = await res.json()
+
+    console.log(res.status)
+
+    if (res.status === 400) {
+      setErrors(resData)
+      return
+    }
+
     authDispatch({
       type: 'LOGIN',
       payload: {
-        user: { id: 1, firstName: 'Hiram', lastName: 'Epifanio', email },
+        user: {
+          id: resData.user.id, 
+          firstName: resData.user.first_name, 
+          lastName: resData.user.last_name, 
+          email 
+        },
         tokens: {
-          access: 'some-access-token',
-          refresh: 'some-refresh-token'
+          access: resData.access,
+          refresh: resData.refresh
         }
       }
     })
