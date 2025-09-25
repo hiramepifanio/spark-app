@@ -7,13 +7,20 @@ import NavItem from "../NavItem/NavItem"
 import Nav from "../Nav/Nav"
 import SidebarHeader from "../SidebarHeader/SidebarHeader"
 import NavSubmenu from '../NavSubmenu/NavSubmenu'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { RiLogoutBoxFill } from "react-icons/ri"
+import { AuthContext } from '../../contexts/AuthContext'
 
 export default function Sidebar() {
+  const { authDispatch } = useContext(AuthContext)
   const [ isSubmenuOpen, setIsSubmenuOpen ] = useState(false)
 
   function handleProjectsNavItemClick() {
     setIsSubmenuOpen(currIsSubmenuOpen => !currIsSubmenuOpen)
+  }
+
+  function handleLogoutNavItemClick() {
+    authDispatch({ type: 'LOGOUT' })
   }
 
   return (
@@ -33,6 +40,7 @@ export default function Sidebar() {
         </NavItem>
         <NavItem to='/meetings' Icon={IoIosPeople}>Reuniões</NavItem>
         <NavItem to='/settings' Icon={FaGear}>Configurações</NavItem>
+        <NavItem to='/login' onClick={handleLogoutNavItemClick} Icon={RiLogoutBoxFill}>Sair</NavItem>
       </Nav>
     </aside>
   )
