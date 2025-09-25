@@ -1,27 +1,43 @@
 import styles from './SignupForm.module.css'
 import Form from '../../components/Form/Form'
 import Button from '../../components/Button/Button'
-import { Link } from 'react-router-dom'
 import Input from '../../components/Input/Input'
-import { useState } from 'react'
+import { use, useState } from 'react'
 import LoginAndSignupFormFooter from '../LoginAndSignupFormFooter/LoginAndSignupFormFooter'
+import { AuthContext } from '../../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignupForm() {
+  const { authDispatch } = use(AuthContext)
   const [errors, setErrors] = useState({})
+  const navigate = useNavigate()
 
   function handleSubmit(event) {
     event.preventDefault()
 
     const formData = new FormData(event.target)
-    const data = Object.fromEntries(formData.entries())
-    console.log(data)
+    const { firstName, lastName, email, password, passwordConfirmation} = Object.fromEntries(formData.entries())
 
-    if (data.passwordConfirmation !== data.password) {
+    if (passwordConfirmation !== password) {
       setErrors(prevErrors => ({
         ...prevErrors,
         passwordConfirmation: 'As senhas devem ser iguais.'
       }))
+      return
     }
+
+    authDispatch({
+      type: 'LOGIN',
+      payload: {
+        user: { id: 1, firstName, lastName, email },
+        tokens: {
+          access: 'some-access-token',
+          refresh: 'some-refresh-token'
+        }
+      }
+    })
+
+    navigate('/dashboard')
   }
 
   return (
