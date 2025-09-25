@@ -28,8 +28,6 @@ export default function LoginForm() {
 
     const resData = await res.json()
 
-    console.log(res.status)
-
     if (res.status === 400) {
       setErrors(resData)
       return
@@ -37,18 +35,7 @@ export default function LoginForm() {
 
     authDispatch({
       type: 'LOGIN',
-      payload: {
-        user: {
-          id: resData.user.id, 
-          firstName: resData.user.first_name, 
-          lastName: resData.user.last_name, 
-          email 
-        },
-        tokens: {
-          access: resData.access,
-          refresh: resData.refresh
-        }
-      }
+      payload: resData
     })
 
     navigate('/dashboard')

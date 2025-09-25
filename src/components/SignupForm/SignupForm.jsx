@@ -12,8 +12,10 @@ export default function SignupForm() {
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+
+    setErrors({})
 
     const formData = new FormData(event.target)
     const { firstName, lastName, email, password, passwordConfirmation} = Object.fromEntries(formData.entries())
@@ -26,15 +28,22 @@ export default function SignupForm() {
       return
     }
 
+    const res = await fetch('http://localhost:8000/api/register/', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firstName, lastName, email, password })
+    })
+
+    const resData = await res.json()
+
+    if (res.status === 400) {
+      setErrors(resData)
+      return
+    }
+
     authDispatch({
       type: 'LOGIN',
-      payload: {
-        user: { id: 1, firstName, lastName, email },
-        tokens: {
-          access: 'some-access-token',
-          refresh: 'some-refresh-token'
-        }
-      }
+      payload: resData
     })
 
     navigate('/dashboard')
