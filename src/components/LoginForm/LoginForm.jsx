@@ -3,12 +3,12 @@ import Form from '../../components/Form/Form'
 import Button from '../../components/Button/Button'
 import { Link, useNavigate } from 'react-router-dom'
 import Input from '../Input/Input'
-import { use, useState } from 'react'
+import { use, useContext, useState } from 'react'
 import LoginAndSignupFormFooter from '../LoginAndSignupFormFooter/LoginAndSignupFormFooter'
 import { AuthContext } from '../../contexts/AuthContext'
 
 export default function LoginForm() {
-  const { authDispatch } = use(AuthContext)
+  const { authDispatch } = useContext(AuthContext)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
 

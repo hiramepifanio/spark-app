@@ -16,8 +16,8 @@ function authReducer(state, action) {
       return {
         user: action.payload.user,
         tokens: {
-          access: action.payload.access,
-          refresh: action.payload.refresh,
+          access: action.payload.tokens.access,
+          refresh: action.payload.tokens.refresh,
         }
       }
     case 'LOGOUT':

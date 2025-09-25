@@ -10,6 +10,7 @@ import SettingsPage from './pages/SettingsPage/SettingsPage'
 import SignupPage from './pages/SignupPage/SignupPage'
 import LoginPage from './pages/LoginPage/LoginPage'
 import { AuthProvider } from "./contexts/AuthContext"
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute"
 
 function App() {
   return (
@@ -17,17 +18,20 @@ function App() {
       <Routes>
         <Route path='/signup' element={<SignupPage />} />
         <Route path='/login' element={<LoginPage />} />
-        <Route element={<Layout />}>
-          <Route path='/' element={<Navigate to='/dashboard' replace />} />
-          <Route path='/dashboard' element={<DashboardPage />} />
-          <Route path='/projects'>
-            <Route path='general' element={<GeneralProjectsPage />} />
-            <Route path='internal' element={<InternalProjectsPage />} />
-            <Route path='external' element={<ExternalProjectsPage />} />
-            <Route path='startups' element={<StartupProjectsPage />} />
+
+        <Route element={<PrivateRoute />}>
+          <Route element={<Layout />}>
+            <Route path='/' element={<Navigate to='/dashboard' replace />} />
+            <Route path='/dashboard' element={<DashboardPage />} />
+            <Route path='/projects'>
+              <Route path='general' element={<GeneralProjectsPage />} />
+              <Route path='internal' element={<InternalProjectsPage />} />
+              <Route path='external' element={<ExternalProjectsPage />} />
+              <Route path='startups' element={<StartupProjectsPage />} />
+            </Route>
+            <Route path='/meetings' element={<MeetingsPage />} />
+            <Route path='/settings' element={<SettingsPage />} />
           </Route>
-          <Route path='/meetings' element={<MeetingsPage />} />
-          <Route path='/settings' element={<SettingsPage />} />
         </Route>
       </Routes>
     </AuthProvider>
