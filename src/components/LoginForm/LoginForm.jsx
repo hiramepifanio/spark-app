@@ -22,16 +22,28 @@ export default function LoginForm() {
     const formData = new FormData(event.target)
     const { email, password } = Object.fromEntries(formData.entries())
 
-    const res = await fetch('http://localhost:8000/api/token/', {
-      method: 'POST',
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    })
+    let res = null
+    let resData = null
+    try {
+      res = await fetch('http://localhost:8000/api/token/', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      })
 
-    const resData = await res.json()
+      resData = await res.json()
+    } catch (error) {
+      addNotification('ERROR', error.message)
+      return
+    }
 
     if (res.status === 400) {
       setErrors(resData)
+      return
+    }
+
+    if (res.status === 401) {
+      addNotification('ERROR', 'Usuário ou senha incorretos')
       return
     }
 
@@ -39,14 +51,6 @@ export default function LoginForm() {
       type: 'LOGIN',
       payload: resData
     })
-
-    addNotification('SUCCESS', 'Voce entrou')
-    setTimeout(() => {
-      addNotification('ERROR', 'Voce entrou')
-    }, 1000)
-    setTimeout(() => {
-      addNotification('SUCCESS', 'Voce entrou entrou entrou entrou entrou entrou entrou entrou entrou entrou entrou')
-    }, 2000)
     
     navigate('/dashboard')
   }
