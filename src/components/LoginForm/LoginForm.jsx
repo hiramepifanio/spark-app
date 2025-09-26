@@ -9,7 +9,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 import { NotificationContext } from '../../contexts/NotificationContext'
 
 export default function LoginForm() {
-  const { addNotification } = useContext(NotificationContext)
+  const { addErrorNotification } = useContext(NotificationContext)
   const { authDispatch } = useContext(AuthContext)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ export default function LoginForm() {
 
       resData = await res.json()
     } catch (error) {
-      addNotification('ERROR', error.message)
+      addErrorNotification(error.message)
       return
     }
 
@@ -43,7 +43,7 @@ export default function LoginForm() {
     }
 
     if (res.status === 401) {
-      addNotification('ERROR', 'Usuário ou senha incorretos')
+      addErrorNotification('Usuário ou senha incorretos')
       return
     }
 

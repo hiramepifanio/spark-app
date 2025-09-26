@@ -3,7 +3,8 @@ import NotificationQueue from "../components/NotificationQueue/NotificationQueue
 
 export const NotificationContext = createContext({
   notifications: [],
-  addNotification: () => {},
+  addErrorNotification: () => {},
+  addSuccessNotification: () => {},
   removeNotification: () => {},
 })
 
@@ -56,9 +57,18 @@ export function NotificationContextProvider({ children }) {
     }, 5000);
   }
 
+  function handleAddErrorNotification(message) {
+    handleAddNotification('ERROR', message)
+  }
+
+  function handleAddSuccessNotification(message) {
+    handleAddNotification('SUCCESS', message)
+  }
+
   const contextValue = {
     notifications: notificationState.notifications,
-    addNotification: handleAddNotification
+    addErrorNotification: handleAddErrorNotification,
+    addSuccessNotification: handleAddSuccessNotification,
   }
 
   return (
