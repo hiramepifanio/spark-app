@@ -8,6 +8,7 @@ import { MdViewTimeline } from "react-icons/md"
 import { FaListAlt } from "react-icons/fa"
 import { FaFilter } from "react-icons/fa6"
 import { FaPlus } from "react-icons/fa6"
+import { MdModeEdit } from "react-icons/md"
 import { useState } from 'react'
 
 const views = [
@@ -44,6 +45,7 @@ export default function ProjectsViewMenu() {
       <div className={styles.actionsContainer}>
         <SearchBar placeholder='Busque em projetos...'/>
         <Button><Label Icon={FaFilter}>Filtrar</Label></Button>
+        <Button><Label Icon={MdModeEdit}>Editar Etapas</Label></Button>
         <Button isFilled><Label Icon={FaPlus}>Novo Projeto</Label></Button>
       </div>
     </menu>

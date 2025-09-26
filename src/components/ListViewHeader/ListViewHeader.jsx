@@ -11,9 +11,9 @@ export default function ListViewHeader({ children, count }) {
         <span className={styles.title}>{children}</span>
         <div className={styles.count}>{count}</div>
       </div>
-      <div className={styles.right}>
+      {/* <div className={styles.right}>
         <button className={styles.add}><Icon Content={FaPlus} /></button>
-      </div>
+      </div> */}
     </div>
   )
 }
