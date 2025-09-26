@@ -6,8 +6,10 @@ import Input from '../Input/Input'
 import { use, useContext, useState } from 'react'
 import LoginAndSignupFormFooter from '../LoginAndSignupFormFooter/LoginAndSignupFormFooter'
 import { AuthContext } from '../../contexts/AuthContext'
+import { NotificationContext } from '../../contexts/NotificationContext'
 
 export default function LoginForm() {
+  const { addNotification } = useContext(NotificationContext)
   const { authDispatch } = useContext(AuthContext)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
@@ -38,6 +40,14 @@ export default function LoginForm() {
       payload: resData
     })
 
+    addNotification('SUCCESS', 'Voce entrou')
+    setTimeout(() => {
+      addNotification('ERROR', 'Voce entrou')
+    }, 1000)
+    setTimeout(() => {
+      addNotification('SUCCESS', 'Voce entrou entrou entrou entrou entrou entrou entrou entrou entrou entrou entrou')
+    }, 2000)
+    
     navigate('/dashboard')
   }
 

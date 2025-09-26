@@ -1,0 +1,37 @@
+.content {
+    width: 460px;
+    height: 64px;
+    display: flex;
+}
+
+.closeIconContainer {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+}
+
+.notificationTypeContainer {
+    flex: 0 0 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px 0px 0px 8px ;
+    font-size: 2rem;
+    color: var(--color-white);
+}
+
+.success {
+    background-color: var(--color-success);
+}
+
+.error {
+    background-color: var(--color-danger);
+}
+
+.message {
+    flex: 1;
+    padding: 0.8rem;
+    display: flex;
+    align-items: center;
+    text-align: justify;
+}
