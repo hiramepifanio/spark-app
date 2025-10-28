@@ -1,9 +1,0 @@
-.layoutContainer {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    grid-template-rows: 70px 1fr;
-    grid-template-areas:
-        "sidebar topbar"
-        "sidebar main";
-    height: 100vh;
-}
