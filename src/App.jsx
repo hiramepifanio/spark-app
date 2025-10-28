@@ -5,7 +5,7 @@ import GeneralProjectsPage from './pages/GeneralProjectsPage/GeneralProjectsPage
 import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
 import SignupPage from './pages/SignupPage/SignupPage'
-import LoginPage from './pages/LoginPage/LoginPage'
+import LoginPage from './pages/LoginPage'
 import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute"
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute/UnauthenticatedRoute"

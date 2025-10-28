@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function LoginPage() {
   const { authDispatch } = useContext(AuthContext)
