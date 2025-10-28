@@ -11,11 +11,13 @@ import {
 import { useContext, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import { useSnackbar } from 'notistack';
 
 export default function LoginPage() {
   const { authDispatch } = useContext(AuthContext)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar();
   
   async function handleSubmit(event) {
     event.preventDefault()
@@ -26,7 +28,7 @@ export default function LoginPage() {
     let res = null
     let resData = null
     try {
-      res = await fetch('http://localhost:8000/api/token/', {
+      res = await fetch('http://localhost:8000/token/', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -34,19 +36,19 @@ export default function LoginPage() {
 
       resData = await res.json()
     } catch (error) {
-      addErrorNotification(error.message)
+      enqueueSnackbar(error.message, { variant: 'error' })
       return
     }
 
-    // if (res.status === 400) {
-    //   setErrors(resData)
-    //   return
-    // }
+    if (res.status === 400) {
+      setErrors(resData)
+      return
+    }
 
-    // if (res.status === 401) {
-    //   addErrorNotification('Usuário ou senha incorretos')
-    //   return
-    // }
+    if (res.status === 401) {
+      enqueueSnackbar('Usuário ou senha incorretos', { variant: 'error' })
+      return
+    }
 
     authDispatch({
       type: 'LOGIN',
@@ -76,6 +78,8 @@ export default function LoginPage() {
               type="email"
               required
               autoFocus
+              error={errors.email}
+              helperText={errors.email ? errors.email : null}
             />
             <TextField
               id="password"
@@ -84,6 +88,8 @@ export default function LoginPage() {
               placeholder="Digite sua senha"
               required
               type="password"
+              error={errors.password}
+              helperText={errors.password ? errors.password : null}
             />
           <Button type="submit" variant="contained">
             Entrar
@@ -94,7 +100,7 @@ export default function LoginPage() {
           <Link component={RouterLink} to="/forgot">
             Esqueceu a senha?
           </Link>
-          <Link component={RouterLink} to="/signup">
+          <Link component={RouterLink} to="/register">
             Cadastrar
           </Link>
         </Stack>

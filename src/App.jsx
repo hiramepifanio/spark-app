@@ -4,20 +4,20 @@ import DashboardPage from './pages/DashboardPage/DashboardPage'
 import GeneralProjectsPage from './pages/GeneralProjectsPage/GeneralProjectsPage'
 import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
-import SignupPage from './pages/SignupPage/SignupPage'
+import RegistrationPage from './pages/RegistrationPage'
 import LoginPage from './pages/LoginPage'
 import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute"
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute/UnauthenticatedRoute"
-import { NotificationContextProvider } from "./contexts/NotificationContext"
+import { SnackbarProvider } from 'notistack';
 
 function App() {
   return (
     <AuthProvider>
-      <NotificationContextProvider>
+      <SnackbarProvider anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
         <Routes>
           <Route element={<UnauthenticatedRoute />}>
-            <Route path='/signup' element={<SignupPage />} />
+            <Route path='/register' element={<RegistrationPage />} />
             <Route path='/login' element={<LoginPage />} />
           </Route>
 
@@ -31,7 +31,7 @@ function App() {
             </Route>
           </Route>
         </Routes>
-      </NotificationContextProvider>
+      </SnackbarProvider>
     </AuthProvider>
   )
 }
