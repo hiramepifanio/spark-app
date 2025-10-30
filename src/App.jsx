@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import Layout from './components/Layout'
 import DashboardPage from './pages/DashboardPage/DashboardPage'
-import GeneralProjectsPage from './pages/GeneralProjectsPage/GeneralProjectsPage'
+import ProjectsPage from './pages/GeneralProjectsPage/ProjectsPage'
 import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
 import RegistrationPage from './pages/RegistrationPage'
@@ -10,6 +10,7 @@ import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute"
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute/UnauthenticatedRoute"
 import { SnackbarProvider } from 'notistack';
+import ProjectWorkflowsPage from "./pages/ProjectWorkflowsPage"
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
             <Route element={<Layout />}>
               <Route path='/' element={<Navigate to='/dashboard' replace />} />
               <Route path='/dashboard' element={<DashboardPage />} />
-              <Route path='/projects' element={<GeneralProjectsPage />} />
+              <Route path='/project-workflows' element={<ProjectWorkflowsPage />} />
+              <Route path='/projects' element={<ProjectsPage />} />
               <Route path='/meetings' element={<MeetingsPage />} />
               <Route path='/settings' element={<SettingsPage />} />
             </Route>

@@ -3,6 +3,8 @@ import PageTitle from '../../components/PageTitle/PageTitle'
 import ProjectsViewMenu from '../../components/ProjectsViewMenu/ProjectsViewMenu'
 import ProjectsListView from '../../components/ProjectsListView/ProjectsListView'
 
+import { Typography } from "@mui/material";
+
 export default function GeneralProjectsPage() {
   return (
     <>
@@ -14,3 +16,12 @@ export default function GeneralProjectsPage() {
     </>
   )
 }
+
+// export default function GeneralProjectsPage() {
+//   return (
+//     <>
+//       <Typography variant="h3" component={'h1'}>Projetos</Typography>
+
+//     </>
+//   )
+// }

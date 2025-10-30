@@ -11,6 +11,11 @@ const items = [
     icon: <Dashboard />
   },
   {
+    to: '/project-workflows',
+    label: 'Workflows',
+    icon: <ViewKanban />
+  },
+  {
     to: '/projects',
     label: 'Projetos',
     icon: <ViewKanban />

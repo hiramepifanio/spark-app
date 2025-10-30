@@ -2,6 +2,7 @@ import { createContext, useEffect, useReducer } from "react"
 
 const initialState = {
   user: null,
+  organization: null,
   access: null,
   refresh: null,
 }
@@ -16,6 +17,7 @@ function authReducer(state, action) {
     case 'LOGIN':
       return {
         user: action.payload.user,
+        organization: action.payload.organization,
         access: action.payload.access,
         refresh: action.payload.refresh,
       }
