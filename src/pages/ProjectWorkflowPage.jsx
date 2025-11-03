@@ -3,7 +3,6 @@ import { use, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { projects } from "../data/projects";
 import { useSnackbar } from "notistack";
 
 export default function ProjectWorkflowPage() {
@@ -103,6 +102,7 @@ export default function ProjectWorkflowPage() {
       ...resData
     }))
     handleCloseEditWorkflowDialog()
+    enqueueSnackbar('Workflow atualizado com sucesso', { variant: 'success' })
   }
 
   function handleOpenDeleteWorkflowDialog() {
@@ -195,6 +195,7 @@ export default function ProjectWorkflowPage() {
       setStages(prevStages => prevStages.map(stage => stage.id === targetStage.id ? resData : stage))
       enqueueSnackbar('Etapa atualizada com sucesso', { variant: 'success' })
     } else {
+      resData.projects = resData.projects ? resData.projects : []
       setStages([...stages, resData])
       enqueueSnackbar('Etapa adicionada com sucesso', { variant: 'success' })
     }
@@ -274,6 +275,9 @@ export default function ProjectWorkflowPage() {
           <Paper className="w-full">
             <Toolbar className="bg-gray-200 !px-4">
               <Typography className="!mr-2" component={'div'} variant="h6">{stage.name}</Typography>
+              <Typography className="!mr-2" component={'div'} variant="body2">
+                {`(${stage.projects.length})`}
+              </Typography>
               <Box className='grow' />
               <IconButton>
                 <Edit onClick={() => handleOpenAddEditStageDialog(stage)}/>
@@ -282,43 +286,44 @@ export default function ProjectWorkflowPage() {
                 <Delete />
               </IconButton>
             </Toolbar>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      Nome
-                    </TableCell>
-                    <TableCell>
-                      Descrição
-                    </TableCell>
-                    <TableCell>
-                      Dono
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {projects.filter(p => p.stage === stage.name).map(project => (
-                    <TableRow
-                      key={project.name}
-                      hover
-                      onClick={() => console.log('click')}
-                    >
+            {stage.projects.length > 0 &&
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
                       <TableCell>
-                        {project.name}
+                        Nome
                       </TableCell>
                       <TableCell>
-                        {project.description}
+                        Descrição
                       </TableCell>
                       <TableCell>
-                        {project.name}
+                        Dono
                       </TableCell>
-
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {stage.projects.map(project => (
+                      <TableRow
+                        key={project.name}
+                        hover
+                        onClick={() => console.log('click')}
+                      >
+                        <TableCell>
+                          {project.name}
+                        </TableCell>
+                        <TableCell>
+                          {project.description}
+                        </TableCell>
+                        <TableCell>
+                          {project.name}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            }
           </Paper>
         </Box>
       ))}
