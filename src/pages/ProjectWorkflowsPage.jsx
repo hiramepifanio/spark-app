@@ -3,6 +3,7 @@ import { use, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 export default function ProjectWorkflowsPage() {
   const [projectWorkflows, setProjectWorkflows] = useState([])
@@ -11,6 +12,7 @@ export default function ProjectWorkflowsPage() {
   const token = authState.access
   const [isAddProjectWorkflowDialogOpen, setIsAddProjectWorkflowDialogOpen] = useState(false);
   const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     async function fetchProjectWorkflows() {
@@ -83,10 +85,9 @@ export default function ProjectWorkflowsPage() {
     }
 
     setProjectWorkflows([...projectWorkflows, resData])
-
     handleCloseAddProjectWorkflowDialog()
-    
     navigateToProjectWorkflowPage(resData.id)
+    enqueueSnackbar('Workflow adicionado com sucesso', { variant: 'success' })
   }
 
   function navigateToProjectWorkflowPage(id) {
@@ -99,9 +100,28 @@ export default function ProjectWorkflowsPage() {
         <Typography variant="h4" component={'h1'}>Workflows</Typography>
         <Box className='grow' />
         <Button onClick={handleOpenAddProjectWorkflowDialog} variant="contained" startIcon={<Add />}>
-          Workflow
+          Adicionar Workflow
         </Button>
       </Toolbar>
+      {!loading && projectWorkflows.length === 0 && (
+        <Box
+          className="flex flex-col items-center justify-center !py-20 text-center !border-2 border-dashed !border-gray-300 rounded-2xl"
+        >
+          <Typography variant="h6" gutterBottom color="text.secondary">
+            Nenhum workflow encontrado
+          </Typography>
+          <Typography variant="body2" color="text.secondary" className="max-w-sm !mb-4">
+            Esta organização ainda não possui workflows. Crie o primeiro workflow para começar a gerenciar o fluxo dos seus projetos.
+          </Typography>
+          <Button 
+            variant="contained" 
+            startIcon={<Add />} 
+            onClick={() => handleOpenAddProjectWorkflowDialog()}
+          >
+            Adicionar Workflow
+          </Button>
+        </Box>
+      )}
       <Grid container spacing={2} mt={1}>
         {projectWorkflows.map(pw => (
           <Grid key={pw.id} size={3}>
