@@ -17,6 +17,8 @@ export default function ProjectWorkflowPage() {
   const [isAddEditStageDialogOpen, setIsAddEditStageDialogOpen] = useState(false)
   const [editingStage, setEditingStage] = useState(null)
 
+  const [isEditWorkflowDialogOpen, setIsEditWorkflowDialogOpen] = useState(false)
+
   const { enqueueSnackbar } = useSnackbar();
   const { authState } = use(AuthContext)
   const token = authState.access
@@ -48,6 +50,55 @@ export default function ProjectWorkflowPage() {
 
     fetchProjectWorkflow(projectWorkflowId)
   }, [])
+
+  function handleOpenEditWorkflowDialog(stage=null) {
+    setIsEditWorkflowDialogOpen(true)
+  }
+
+  function handleCloseEditWorkflowDialog() {
+    setIsEditWorkflowDialogOpen(false)
+  }
+
+  async function handleSubmitEditWorkflowForm(event) {
+    event.preventDefault()
+    
+    const formData = new FormData(event.target)
+    const { name } = Object.fromEntries(formData.entries())
+    
+    let res = null
+    let resData = null
+    try {
+      res = await fetch(`http://localhost:8000/project-workflows/${projectWorkflowId}/`, {
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name })
+      })
+
+      resData = await res.json()
+    } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' })
+      return
+    }
+
+    if (res.status === 400) {
+      setErrors(resData)
+      return
+    }
+
+    if (!res.ok) {
+      enqueueSnackbar('Houve algum erro durante a atualização da workflow', { variant: 'error' })
+      return
+    }
+
+    setProjectWorkflow(prev => ({
+      ...prev,
+      ...resData
+    }))
+    handleCloseEditWorkflowDialog()
+  }
 
   function handleOpenAddEditStageDialog(stage=null) {
     setIsAddEditStageDialogOpen(true)
@@ -140,7 +191,7 @@ export default function ProjectWorkflowPage() {
       <Toolbar className="!px-0" >
         <Typography className="!mr-2" variant="h4" component={'h1'}>{!loading ? projectWorkflow.name : 'Loading'}</Typography>
         <IconButton>
-          <Edit />
+          <Edit onClick={handleOpenEditWorkflowDialog} />
         </IconButton>
         <IconButton>
           <Delete />
@@ -236,6 +287,33 @@ export default function ProjectWorkflowPage() {
           <Button variant="contained" type="submit" form="add-edit-stage-form">
             {editingStage ? 'Salvar' : 'Adicionar'}
           </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog 
+        open={isEditWorkflowDialogOpen} 
+        onClose={handleCloseEditWorkflowDialog} 
+        disableRestoreFocus
+      >
+        <DialogTitle>Editar Workflow</DialogTitle>
+        <DialogContent className="w-md" >
+          <DialogContentText mb={2}>Edite os dados do workflow</DialogContentText>
+          <Box component="form" onSubmit={handleSubmitEditWorkflowForm} id="edit-workflow-form">
+            <TextField
+              id="name"
+              name="name"
+              label="Nome"
+              placeholder="Digite o nome do workflow"
+              type="text"
+              required
+              autoFocus
+              fullWidth
+              defaultValue={projectWorkflow?.name}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleCloseEditWorkflowDialog}>Cancelar</Button>
+          <Button variant="contained" type="submit" form="edit-workflow-form">Salvar</Button>
         </DialogActions>
       </Dialog>
     </> 
