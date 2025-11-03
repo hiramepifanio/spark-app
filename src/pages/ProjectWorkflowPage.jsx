@@ -14,8 +14,9 @@ export default function ProjectWorkflowPage() {
 
   const [loading, setLoading] = useState(true);
   
+  const [isDeleteStageDialogOpen, setIsDeleteStageDialogOpen] = useState(false)
   const [isAddEditStageDialogOpen, setIsAddEditStageDialogOpen] = useState(false)
-  const [editingStage, setEditingStage] = useState(null)
+  const [targetStage, setTargetStage] = useState(null)
 
   const [isEditWorkflowDialogOpen, setIsEditWorkflowDialogOpen] = useState(false)
 
@@ -51,7 +52,7 @@ export default function ProjectWorkflowPage() {
     fetchProjectWorkflow(projectWorkflowId)
   }, [])
 
-  function handleOpenEditWorkflowDialog(stage=null) {
+  function handleOpenEditWorkflowDialog() {
     setIsEditWorkflowDialogOpen(true)
   }
 
@@ -102,12 +103,12 @@ export default function ProjectWorkflowPage() {
 
   function handleOpenAddEditStageDialog(stage=null) {
     setIsAddEditStageDialogOpen(true)
-    setEditingStage(stage)
+    setTargetStage(stage)
   }
 
   function handleCloseAddEditStageDialog() {
     setIsAddEditStageDialogOpen(false)
-    setEditingStage(null)
+    setTargetStage(null)
   }
 
   async function handleSubmitAddEditStageForm(event) {
@@ -119,11 +120,10 @@ export default function ProjectWorkflowPage() {
     let res = null
     let resData = null
     try {
-      console.log('editingStage', editingStage)
       const baseUrl =  `http://localhost:8000/project-workflows/${projectWorkflowId}/project-stages/`
-      const url = baseUrl + (editingStage ? `${editingStage.id}/` : '')
+      const url = baseUrl + (targetStage ? `${targetStage.id}/` : '')
       res = await fetch(url, {
-        method: editingStage ? 'PUT' : 'POST',
+        method: targetStage ? 'PUT' : 'POST',
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -143,7 +143,7 @@ export default function ProjectWorkflowPage() {
     }
 
     if (!res.ok) {
-      const message = (editingStage ?
+      const message = (targetStage ?
         'Houve algum erro durante a atualização da etapa':
         'Houve algum erro durante a criação de nova etapa'
       )
@@ -153,8 +153,8 @@ export default function ProjectWorkflowPage() {
       return
     }
 
-    if (editingStage) {
-      setStages(prevStages => prevStages.map(stage => stage.id === editingStage.id ? resData : stage))
+    if (targetStage) {
+      setStages(prevStages => prevStages.map(stage => stage.id === targetStage.id ? resData : stage))
       enqueueSnackbar('Etapa atualizada com sucesso', { variant: 'success' })
     } else {
       setStages([...stages, resData])
@@ -163,10 +163,20 @@ export default function ProjectWorkflowPage() {
     handleCloseAddEditStageDialog()
   }
 
-  async function handleDeleteStage(stageId) {
+  function handleOpenDeleteStageDialog(stage=null) {
+    setIsDeleteStageDialogOpen(true)
+    setTargetStage(stage)
+  }
+
+  function handleCloseDeleteStageDialog() {
+    setIsDeleteStageDialogOpen(false)
+    setTargetStage(null)
+  }
+
+  async function handleDeleteStage() {
     let res = null
     try {
-      res = await fetch(`http://localhost:8000/project-workflows/${projectWorkflowId}/project-stages/${stageId}/`, {
+      res = await fetch(`http://localhost:8000/project-workflows/${projectWorkflowId}/project-stages/${targetStage.id}/`, {
         method: 'DELETE',
         headers: {
           "Content-Type": "application/json",
@@ -183,7 +193,8 @@ export default function ProjectWorkflowPage() {
     }
 
     enqueueSnackbar('Etapa removida com sucesso', { variant: 'success' })
-    setStages(prevStages => prevStages.filter(stage => stage.id !== stageId))
+    setStages(prevStages => prevStages.filter(stage => stage.id !== targetStage.id))
+    handleCloseDeleteStageDialog()
   }
 
   return (
@@ -210,7 +221,7 @@ export default function ProjectWorkflowPage() {
               <IconButton>
                 <Edit onClick={() => handleOpenAddEditStageDialog(stage)}/>
               </IconButton>
-              <IconButton onClick={() => handleDeleteStage(stage.id)}>
+              <IconButton onClick={() => handleOpenDeleteStageDialog(stage)}>
                 <Delete />
               </IconButton>
             </Toolbar>
@@ -259,11 +270,11 @@ export default function ProjectWorkflowPage() {
         onClose={handleCloseAddEditStageDialog} 
         disableRestoreFocus
       >
-        <DialogTitle>{editingStage ? 'Editar etapa' : 'Adicionar etapa'}</DialogTitle>
+        <DialogTitle>{targetStage ? 'Editar etapa' : 'Adicionar etapa'}</DialogTitle>
         <DialogContent className="w-md" >
           <DialogContentText mb={2}>
             {
-              editingStage ? 
+              targetStage ? 
               'Edite os dados da etapa' : 
               'Adicione uma nova etapa para seus projetos'
             }
@@ -278,14 +289,14 @@ export default function ProjectWorkflowPage() {
               required
               autoFocus
               fullWidth
-              defaultValue={editingStage?.name || ""}
+              defaultValue={targetStage?.name || ""}
             />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={handleCloseAddEditStageDialog}>Cancelar</Button>
           <Button variant="contained" type="submit" form="add-edit-stage-form">
-            {editingStage ? 'Salvar' : 'Adicionar'}
+            {targetStage ? 'Salvar' : 'Adicionar'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -314,6 +325,22 @@ export default function ProjectWorkflowPage() {
         <DialogActions>
           <Button variant="outlined" onClick={handleCloseEditWorkflowDialog}>Cancelar</Button>
           <Button variant="contained" type="submit" form="edit-workflow-form">Salvar</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog 
+        open={isDeleteStageDialogOpen} 
+        onClose={handleCloseDeleteStageDialog} 
+        disableRestoreFocus
+        maxWidth='sm'
+        fullWidth={true}
+      >
+        <DialogTitle>Você tem certeza que deseja excluir etapa "{targetStage?.name}"?</DialogTitle>
+        <DialogContent >
+          <DialogContentText mb={2}>Esta ação é irreversível e pode levar a perda de dados.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleCloseDeleteStageDialog}>Cancelar</Button>
+          <Button variant="contained" onClick={handleDeleteStage}>Confirmar</Button>
         </DialogActions>
       </Dialog>
     </> 
