@@ -247,9 +247,28 @@ export default function ProjectWorkflowPage() {
         </IconButton>
         <Box className='grow' />
         <Button className="!mr-2" variant="contained" startIcon={<Add />} onClick={() => handleOpenAddEditStageDialog()}>
-          Etapa
+          Adicionar Etapa
         </Button>
       </Toolbar>
+      {!loading && stages.length === 0 && (
+        <Box
+          className="flex flex-col items-center justify-center !py-20 text-center !border-2 border-dashed !border-gray-300 rounded-2xl"
+        >
+          <Typography variant="h6" gutterBottom color="text.secondary">
+            Nenhuma etapa encontrada
+          </Typography>
+          <Typography variant="body2" color="text.secondary" className="max-w-sm !mb-4">
+            Este workflow ainda não possui etapas. Crie a primeira etapa para começar a organizar seus projetos.
+          </Typography>
+          <Button 
+            variant="contained" 
+            startIcon={<Add />} 
+            onClick={() => handleOpenAddEditStageDialog()}
+          >
+            Adicionar etapa
+          </Button>
+        </Box>
+      )}
       {stages.map(stage => (
         <Box key={stage.id} className="w-full !mb-4">
           <Paper className="w-full">
