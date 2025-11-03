@@ -2,7 +2,7 @@ import { Avatar, AvatarGroup, Box, Button, Card, CardActionArea, CardContent, Ca
 import { use, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { projects } from "../data/projects";
 import { useSnackbar } from "notistack";
 
@@ -18,10 +18,12 @@ export default function ProjectWorkflowPage() {
   const [isAddEditStageDialogOpen, setIsAddEditStageDialogOpen] = useState(false)
   const [targetStage, setTargetStage] = useState(null)
 
+  const [isDeleteWorkflowDialogOpen, setIsDeleteWorkflowDialogOpen] = useState(false)
   const [isEditWorkflowDialogOpen, setIsEditWorkflowDialogOpen] = useState(false)
 
   const { enqueueSnackbar } = useSnackbar();
   const { authState } = use(AuthContext)
+  const navigate = useNavigate()
   const token = authState.access
 
   useEffect(() => {
@@ -51,6 +53,8 @@ export default function ProjectWorkflowPage() {
 
     fetchProjectWorkflow(projectWorkflowId)
   }, [])
+
+  // ------------------------ Workflow
 
   function handleOpenEditWorkflowDialog() {
     setIsEditWorkflowDialogOpen(true)
@@ -100,6 +104,40 @@ export default function ProjectWorkflowPage() {
     }))
     handleCloseEditWorkflowDialog()
   }
+
+  function handleOpenDeleteWorkflowDialog() {
+    setIsDeleteWorkflowDialogOpen(true)
+  }
+
+  function handleCloseDeleteWorkflowDialog() {
+    setIsDeleteWorkflowDialogOpen(false)
+  }
+
+  async function handleDeleteWorkflow() {
+    let res = null
+    try {
+      res = await fetch(`http://localhost:8000/project-workflows/${projectWorkflowId}/`, {
+        method: 'DELETE',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      })
+    } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' })
+      return
+    }
+
+    if (!res.ok) {
+      enqueueSnackbar('Houve algum erro durante a exclusão do workflow', { variant: 'error' })
+    }
+
+    enqueueSnackbar('Workflow excluído com sucesso', { variant: 'success' })
+    handleCloseDeleteWorkflowDialog()
+    navigate('/project-workflows')
+  }
+
+  // ------------------------ Stage
 
   function handleOpenAddEditStageDialog(stage=null) {
     setIsAddEditStageDialogOpen(true)
@@ -204,7 +242,7 @@ export default function ProjectWorkflowPage() {
         <IconButton>
           <Edit onClick={handleOpenEditWorkflowDialog} />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={handleOpenDeleteWorkflowDialog}>
           <Delete />
         </IconButton>
         <Box className='grow' />
@@ -341,6 +379,22 @@ export default function ProjectWorkflowPage() {
         <DialogActions>
           <Button variant="outlined" onClick={handleCloseDeleteStageDialog}>Cancelar</Button>
           <Button variant="contained" onClick={handleDeleteStage}>Confirmar</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog 
+        open={isDeleteWorkflowDialogOpen} 
+        onClose={handleCloseDeleteWorkflowDialog} 
+        disableRestoreFocus
+        maxWidth='sm'
+        fullWidth={true}
+      >
+        <DialogTitle>Você tem certeza que deseja excluir este workflow?</DialogTitle>
+        <DialogContent >
+          <DialogContentText mb={2}>Esta ação é irreversível e pode levar a perda de dados.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleCloseDeleteWorkflowDialog}>Cancelar</Button>
+          <Button variant="contained" onClick={handleDeleteWorkflow}>Confirmar</Button>
         </DialogActions>
       </Dialog>
     </> 
