@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import Layout from './components/Layout'
 import DashboardPage from './pages/DashboardPage/DashboardPage'
-import ProjectsPage from './pages/GeneralProjectsPage/ProjectsPage'
 import MeetingsPage from './pages/MeetingsPage/MeetingsPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
 import RegistrationPage from './pages/RegistrationPage'
@@ -29,7 +28,6 @@ function App() {
               <Route path='/dashboard' element={<DashboardPage />} />
               <Route path='/project-workflows' element={<ProjectWorkflowsPage />} />
               <Route path='/project-workflows/:projectWorkflowId' element={<ProjectWorkflowPage />} />
-              <Route path='/projects' element={<ProjectsPage />} />
               <Route path='/meetings' element={<MeetingsPage />} />
               <Route path='/settings' element={<SettingsPage />} />
             </Route>

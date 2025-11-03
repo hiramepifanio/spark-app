@@ -16,11 +16,6 @@ const items = [
     icon: <ViewKanban />
   },
   {
-    to: '/projects',
-    label: 'Projetos',
-    icon: <ViewKanban />
-  },
-  {
     to: '/meetings',
     label: 'Reuniões',
     icon: <Group />
