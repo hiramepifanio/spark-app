@@ -1,7 +1,7 @@
-import { Avatar, AvatarGroup, Box, Button, Card, CardActionArea, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, AvatarGroup, Box, Button, Card, CardActionArea, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Stack, TextField, Toolbar, Typography } from "@mui/material";
 import { use, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { Add, MoreVert } from "@mui/icons-material";
+import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 export default function ProjectWorkflowsPage() {
@@ -95,8 +95,13 @@ export default function ProjectWorkflowsPage() {
 
   return (
     <>
-      <Typography variant="h4" component={'h1'}>Workflows de Projetos</Typography>
-      <Typography variant="h5" component={'h2'}>{authState.organization.name}</Typography>
+      <Toolbar className="!px-0" >
+        <Typography variant="h4" component={'h1'}>Workflows</Typography>
+        <Box className='grow' />
+        <Button onClick={handleOpenAddProjectWorkflowDialog} variant="contained" startIcon={<Add />}>
+          Workflow
+        </Button>
+      </Toolbar>
       <Grid container spacing={2} mt={1}>
         {projectWorkflows.map(pw => (
           <Grid key={pw.id} size={3}>
@@ -114,27 +119,13 @@ export default function ProjectWorkflowsPage() {
             </Card>
           </Grid>
         ))}
-        <Grid size={3}>
-          <Card className="!h-30">
-            <CardActionArea onClick={handleOpenAddProjectWorkflowDialog} className="h-full">
-              <CardContent className="flex">
-                <Stack direction={'row'} className="grow flex items-center">
-                  <Avatar className="!mr-2"><Add /></Avatar>
-                  <Typography component="span" variant="h6" className="grow">
-                    Novo workflow
-                  </Typography>
-                </Stack>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </Grid>
       </Grid>
       <Dialog 
         open={isAddProjectWorkflowDialogOpen} 
         onClose={handleCloseAddProjectWorkflowDialog} 
         disableRestoreFocus
       >
-        <DialogTitle>Criar novo Workflow de Projeto</DialogTitle>
+        <DialogTitle>Adicionar workflow</DialogTitle>
         <DialogContent className="w-md" >
           <DialogContentText mb={2}>
             Crie um novo workflow para gerenciar seus projetos
@@ -144,7 +135,7 @@ export default function ProjectWorkflowsPage() {
               id="name"
               name="name"
               label="Nome"
-              placeholder="Digite o nome do workflow de projeto"
+              placeholder="Digite o nome do workflow"
               type="text"
               required
               autoFocus

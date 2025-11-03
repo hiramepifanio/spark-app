@@ -11,6 +11,7 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute"
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute/UnauthenticatedRoute"
 import { SnackbarProvider } from 'notistack';
 import ProjectWorkflowsPage from "./pages/ProjectWorkflowsPage"
+import ProjectWorkflowPage from "./pages/ProjectWorkflowPage"
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path='/' element={<Navigate to='/dashboard' replace />} />
               <Route path='/dashboard' element={<DashboardPage />} />
               <Route path='/project-workflows' element={<ProjectWorkflowsPage />} />
+              <Route path='/project-workflows/:projectWorkflowId' element={<ProjectWorkflowPage />} />
               <Route path='/projects' element={<ProjectsPage />} />
               <Route path='/meetings' element={<MeetingsPage />} />
               <Route path='/settings' element={<SettingsPage />} />
