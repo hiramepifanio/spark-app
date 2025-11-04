@@ -4,14 +4,12 @@ import { AuthContext } from "../contexts/AuthContext";
 import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { useFetch } from "../hooks/useFetch";
+import { useAPI } from "../hooks/useAPI";
 
 export default function ProjectWorkflowPage() {
   const { projectWorkflowId } = useParams();
-
-  const [projectWorkflow, setProjectWorkflow] = useState(null)
-  const [stages, setStages] = useState([])
-
-  const [loading, setLoading] = useState(true);
+  const { post, put, del } = useAPI()
   
   const [isDeleteStageDialogOpen, setIsDeleteStageDialogOpen] = useState(false)
   const [isAddEditStageDialogOpen, setIsAddEditStageDialogOpen] = useState(false)
@@ -25,35 +23,7 @@ export default function ProjectWorkflowPage() {
   const navigate = useNavigate()
   const token = authState.access
 
-  useEffect(() => {
-    async function fetchProjectWorkflow(id) {
-      try {
-        const response = await fetch(`http://localhost:8000/project-workflows/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          }
-        })
-
-        if (!response.ok) {
-          throw new Error("Falha ao buscar workflow de projeto")
-        }
-
-        const data = await response.json()
-        setProjectWorkflow(data)
-        setStages(data.stages)
-      } catch (error) {
-        console.log(error.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProjectWorkflow(projectWorkflowId)
-  }, [])
-
-  // ------------------------ Workflow
+  const {isLoading: isLoadingWorkflow, fetchedData: workflow, setFetchedData: setWorkflow} = useFetch(`/project-workflows/${projectWorkflowId}`, 'GET')
 
   function handleOpenEditWorkflowDialog() {
     setIsEditWorkflowDialogOpen(true)
@@ -67,39 +37,19 @@ export default function ProjectWorkflowPage() {
     event.preventDefault()
     
     const formData = new FormData(event.target)
-    const { name } = Object.fromEntries(formData.entries())
-    
-    let res = null
-    let resData = null
-    try {
-      res = await fetch(`http://localhost:8000/project-workflows/${projectWorkflowId}/`, {
-        method: 'PUT',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name })
-      })
+    const payload = Object.fromEntries(formData.entries())
 
-      resData = await res.json()
-    } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' })
+    const { isOk, data } = await put(`/project-workflows/${projectWorkflowId}/`, payload)
+
+    if (!isOk) {
+      enqueueSnackbar('Houve algum erro durante atualização de workflow', { variant: 'error' })
+      handleCloseEditWorkflowDialog()
       return
     }
 
-    if (res.status === 400) {
-      setErrors(resData)
-      return
-    }
-
-    if (!res.ok) {
-      enqueueSnackbar('Houve algum erro durante a atualização da workflow', { variant: 'error' })
-      return
-    }
-
-    setProjectWorkflow(prev => ({
+    setWorkflow(prev => ({
       ...prev,
-      ...resData
+      ...data
     }))
     handleCloseEditWorkflowDialog()
     enqueueSnackbar('Workflow atualizado com sucesso', { variant: 'success' })
@@ -114,22 +64,12 @@ export default function ProjectWorkflowPage() {
   }
 
   async function handleDeleteWorkflow() {
-    let res = null
-    try {
-      res = await fetch(`http://localhost:8000/project-workflows/${projectWorkflowId}/`, {
-        method: 'DELETE',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        }
-      })
-    } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' })
-      return
-    }
+    const { isOk } = await del(`/project-workflows/${projectWorkflowId}/`)
 
-    if (!res.ok) {
-      enqueueSnackbar('Houve algum erro durante a exclusão do workflow', { variant: 'error' })
+    if (!isOk) {
+      enqueueSnackbar('Houve algum erro durante exclusão de workflow', { variant: 'error' })
+      handleCloseDeleteWorkflowDialog()
+      return
     }
 
     enqueueSnackbar('Workflow excluído com sucesso', { variant: 'success' })
@@ -153,50 +93,38 @@ export default function ProjectWorkflowPage() {
     event.preventDefault()
     
     const formData = new FormData(event.target)
-    const { name } = Object.fromEntries(formData.entries())
-    
-    let res = null
-    let resData = null
-    try {
-      const baseUrl =  `http://localhost:8000/project-workflows/${projectWorkflowId}/project-stages/`
-      const url = baseUrl + (targetStage ? `${targetStage.id}/` : '')
-      res = await fetch(url, {
-        method: targetStage ? 'PUT' : 'POST',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name })
-      })
+    const payload = Object.fromEntries(formData.entries())
 
-      resData = await res.json()
-    } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' })
-      return
-    }
+    const { isOk, data } = (targetStage ? 
+      await put(`/project-workflows/${projectWorkflowId}/project-stages/${targetStage.id}/`, payload) :
+      await post(`/project-workflows/${projectWorkflowId}/project-stages/`, payload)
+    )
 
-    if (res.status === 400) {
-      setErrors(resData)
-      return
-    }
-
-    if (!res.ok) {
+    if (!isOk) {
       const message = (targetStage ?
         'Houve algum erro durante a atualização da etapa':
         'Houve algum erro durante a criação de nova etapa'
       )
-
       enqueueSnackbar(message, { variant: 'error' })
-      console.log(resData)
+      handleCloseAddEditStageDialog()
       return
     }
 
     if (targetStage) {
-      setStages(prevStages => prevStages.map(stage => stage.id === targetStage.id ? resData : stage))
+      setWorkflow(prevWorkflow => ({
+        ...prevWorkflow,
+        stages: prevWorkflow.stages.map(stage => stage.id === targetStage.id ? data : stage)
+      }))
       enqueueSnackbar('Etapa atualizada com sucesso', { variant: 'success' })
     } else {
-      resData.projects = resData.projects ? resData.projects : []
-      setStages([...stages, resData])
+      data.projects = data.projects ? data.projects : []
+      setWorkflow(prevWorkflow => ({
+        ...prevWorkflow,
+        stages: [
+          ...prevWorkflow.stages,
+          data
+        ]
+      }))
       enqueueSnackbar('Etapa adicionada com sucesso', { variant: 'success' })
     }
     handleCloseAddEditStageDialog()
@@ -213,33 +141,26 @@ export default function ProjectWorkflowPage() {
   }
 
   async function handleDeleteStage() {
-    let res = null
-    try {
-      res = await fetch(`http://localhost:8000/project-workflows/${projectWorkflowId}/project-stages/${targetStage.id}/`, {
-        method: 'DELETE',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        }
-      })
-    } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' })
+    const { isOk } = await del(`/project-workflows/${projectWorkflowId}/project-stages/${targetStage.id}/`)
+
+    if (!isOk) {
+      enqueueSnackbar('Houve algum erro durante a remoção da etapa', { variant: 'error' })
+      handleCloseDeleteStageDialog()
       return
     }
 
-    if (!res.ok) {
-      enqueueSnackbar('Houve algum erro durante a remoção da etapa', { variant: 'error' })
-    }
-
     enqueueSnackbar('Etapa removida com sucesso', { variant: 'success' })
-    setStages(prevStages => prevStages.filter(stage => stage.id !== targetStage.id))
+    setWorkflow(prevWorkflow => ({
+      ...prevWorkflow,
+      stages: prevWorkflow.stages.filter(stage => stage.id !== targetStage.id)
+    }))
     handleCloseDeleteStageDialog()
   }
 
   return (
     <>
       <Toolbar className="!px-0" >
-        <Typography className="!mr-2" variant="h4" component={'h1'}>{!loading ? projectWorkflow.name : 'Loading'}</Typography>
+        <Typography className="!mr-2" variant="h4" component={'h1'}>{!isLoadingWorkflow ? workflow.name : 'Loading'}</Typography>
         <IconButton>
           <Edit onClick={handleOpenEditWorkflowDialog} />
         </IconButton>
@@ -251,7 +172,7 @@ export default function ProjectWorkflowPage() {
           Adicionar Etapa
         </Button>
       </Toolbar>
-      {!loading && stages.length === 0 && (
+      {!isLoadingWorkflow && workflow?.stages.length === 0 && (
         <Box
           className="flex flex-col items-center justify-center !py-20 text-center !border-2 border-dashed !border-gray-300 rounded-2xl"
         >
@@ -270,7 +191,7 @@ export default function ProjectWorkflowPage() {
           </Button>
         </Box>
       )}
-      {stages.map(stage => (
+      {workflow?.stages.map(stage => (
         <Box key={stage.id} className="w-full !mb-4">
           <Paper className="w-full">
             <Toolbar className="bg-gray-200 !px-4">
@@ -380,7 +301,7 @@ export default function ProjectWorkflowPage() {
               required
               autoFocus
               fullWidth
-              defaultValue={projectWorkflow?.name}
+              defaultValue={workflow?.name}
             />
           </Box>
         </DialogContent>
