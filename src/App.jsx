@@ -27,7 +27,7 @@ function App() {
               <Route path='/' element={<Navigate to='/dashboard' replace />} />
               <Route path='/dashboard' element={<DashboardPage />} />
               <Route path='/project-workflows' element={<ProjectWorkflowsPage />} />
-              <Route path='/project-workflows/:projectWorkflowId' element={<ProjectWorkflowPage />} />
+              <Route path='/project-workflows/:workflowId' element={<ProjectWorkflowPage />} />
               <Route path='/meetings' element={<MeetingsPage />} />
               <Route path='/settings' element={<SettingsPage />} />
             </Route>

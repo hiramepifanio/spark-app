@@ -17,6 +17,7 @@ export function useFetch<T>(endpoint: string, initialState: T): UseFetchResult<T
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true)
+      console.log(endpoint)
 
       const { status, isOk, data, errors } = await get<T>(endpoint)
       
