@@ -10,17 +10,16 @@ import DeleteDialog from "../components/DeleteDialog";
 import AddEditStageDialog from "../components/AddEditStageDialog";
 import AddEditWorkflowDialog from "../components/AddEditWorkflowDialog";
 import StageTable from "../components/StageTable";
+import { useDialogState } from "../hooks/useDialogState";
 
 export default function ProjectWorkflowPage() {
   const { projectWorkflowId } = useParams();
   const { post, put, del } = useAPI()
-  
-  const [isDeleteStageDialogOpen, setIsDeleteStageDialogOpen] = useState(false)
-  const [isAddEditStageDialogOpen, setIsAddEditStageDialogOpen] = useState(false)
-  const [targetStage, setTargetStage] = useState(null)
 
-  const [isDeleteWorkflowDialogOpen, setIsDeleteWorkflowDialogOpen] = useState(false)
-  const [isEditWorkflowDialogOpen, setIsEditWorkflowDialogOpen] = useState(false)
+  const addEditStageDialogState = useDialogState()
+  const deleteStageDialogState = useDialogState()
+  const editWorkflowDialogState = useDialogState()
+  const deleteWorkflowDialogState = useDialogState()
 
   const { enqueueSnackbar } = useSnackbar();
   const { authState } = use(AuthContext)
@@ -28,14 +27,6 @@ export default function ProjectWorkflowPage() {
   const token = authState.access
 
   const {isLoading: isLoadingWorkflow, fetchedData: workflow, setFetchedData: setWorkflow} = useFetch(`/project-workflows/${projectWorkflowId}`, 'GET')
-
-  function handleOpenEditWorkflowDialog() {
-    setIsEditWorkflowDialogOpen(true)
-  }
-
-  function handleCloseEditWorkflowDialog() {
-    setIsEditWorkflowDialogOpen(false)
-  }
 
   async function handleSubmitEditWorkflowForm(event) {
     event.preventDefault()
@@ -47,7 +38,7 @@ export default function ProjectWorkflowPage() {
 
     if (!isOk) {
       enqueueSnackbar('Houve algum erro durante atualização de workflow', { variant: 'error' })
-      handleCloseEditWorkflowDialog()
+      editWorkflowDialogState.close()
       return
     }
 
@@ -55,16 +46,8 @@ export default function ProjectWorkflowPage() {
       ...prev,
       ...data
     }))
-    handleCloseEditWorkflowDialog()
+    editWorkflowDialogState.close()
     enqueueSnackbar('Workflow atualizado com sucesso', { variant: 'success' })
-  }
-
-  function handleOpenDeleteWorkflowDialog() {
-    setIsDeleteWorkflowDialogOpen(true)
-  }
-
-  function handleCloseDeleteWorkflowDialog() {
-    setIsDeleteWorkflowDialogOpen(false)
   }
 
   async function handleDeleteWorkflow() {
@@ -72,26 +55,16 @@ export default function ProjectWorkflowPage() {
 
     if (!isOk) {
       enqueueSnackbar('Houve algum erro durante exclusão de workflow', { variant: 'error' })
-      handleCloseDeleteWorkflowDialog()
+      deleteWorkflowDialogState.close()
       return
     }
 
     enqueueSnackbar('Workflow excluído com sucesso', { variant: 'success' })
-    handleCloseDeleteWorkflowDialog()
+    deleteWorkflowDialogState.close()
     navigate('/project-workflows')
   }
 
   // ------------------------ Stage
-
-  function handleOpenAddEditStageDialog(stage=null) {
-    setIsAddEditStageDialogOpen(true)
-    setTargetStage(stage)
-  }
-
-  function handleCloseAddEditStageDialog() {
-    setIsAddEditStageDialogOpen(false)
-    setTargetStage(null)
-  }
 
   async function handleSubmitAddEditStageForm(event) {
     event.preventDefault()
@@ -99,25 +72,25 @@ export default function ProjectWorkflowPage() {
     const formData = new FormData(event.target)
     const payload = Object.fromEntries(formData.entries())
 
-    const { isOk, data } = (targetStage ? 
-      await put(`/project-workflows/${projectWorkflowId}/project-stages/${targetStage.id}/`, payload) :
+    const { isOk, data } = (addEditStageDialogState.subject ? 
+      await put(`/project-workflows/${projectWorkflowId}/project-stages/${addEditStageDialogState.subject.id}/`, payload) :
       await post(`/project-workflows/${projectWorkflowId}/project-stages/`, payload)
     )
 
     if (!isOk) {
-      const message = (targetStage ?
+      const message = (addEditStageDialogState.subject ?
         'Houve algum erro durante a atualização da etapa':
         'Houve algum erro durante a criação de nova etapa'
       )
       enqueueSnackbar(message, { variant: 'error' })
-      handleCloseAddEditStageDialog()
+      addEditStageDialogState.close()
       return
     }
 
-    if (targetStage) {
+    if (addEditStageDialogState.subject) {
       setWorkflow(prevWorkflow => ({
         ...prevWorkflow,
-        stages: prevWorkflow.stages.map(stage => stage.id === targetStage.id ? data : stage)
+        stages: prevWorkflow.stages.map(stage => stage.id === addEditStageDialogState.subject.id ? data : stage)
       }))
       enqueueSnackbar('Etapa atualizada com sucesso', { variant: 'success' })
     } else {
@@ -131,34 +104,24 @@ export default function ProjectWorkflowPage() {
       }))
       enqueueSnackbar('Etapa adicionada com sucesso', { variant: 'success' })
     }
-    handleCloseAddEditStageDialog()
-  }
-
-  function handleOpenDeleteStageDialog(stage=null) {
-    setIsDeleteStageDialogOpen(true)
-    setTargetStage(stage)
-  }
-
-  function handleCloseDeleteStageDialog() {
-    setIsDeleteStageDialogOpen(false)
-    setTargetStage(null)
+    addEditStageDialogState.close()
   }
 
   async function handleDeleteStage() {
-    const { isOk } = await del(`/project-workflows/${projectWorkflowId}/project-stages/${targetStage.id}/`)
+    const { isOk } = await del(`/project-workflows/${projectWorkflowId}/project-stages/${deleteStageDialogState.subject.id}/`)
 
     if (!isOk) {
       enqueueSnackbar('Houve algum erro durante a remoção da etapa', { variant: 'error' })
-      handleCloseDeleteStageDialog()
+      deleteStageDialogState.close()
       return
     }
 
     enqueueSnackbar('Etapa removida com sucesso', { variant: 'success' })
     setWorkflow(prevWorkflow => ({
       ...prevWorkflow,
-      stages: prevWorkflow.stages.filter(stage => stage.id !== targetStage.id)
+      stages: prevWorkflow.stages.filter(stage => stage.id !== deleteStageDialogState.subject.id)
     }))
-    handleCloseDeleteStageDialog()
+    deleteStageDialogState.close()
   }
 
   return (
@@ -166,13 +129,13 @@ export default function ProjectWorkflowPage() {
       <Toolbar className="!px-0" >
         <Typography className="!mr-2" variant="h4" component={'h1'}>{!isLoadingWorkflow ? workflow.name : 'Loading'}</Typography>
         <IconButton>
-          <Edit onClick={handleOpenEditWorkflowDialog} />
+          <Edit onClick={editWorkflowDialogState.open} />
         </IconButton>
-        <IconButton onClick={handleOpenDeleteWorkflowDialog}>
+        <IconButton onClick={deleteWorkflowDialogState.open}>
           <Delete />
         </IconButton>
         <Box className='grow' />
-        <Button className="!mr-2" variant="contained" startIcon={<Add />} onClick={() => handleOpenAddEditStageDialog()}>
+        <Button className="!mr-2" variant="contained" startIcon={<Add />} onClick={() => addEditStageDialogState.open()}>
           Adicionar Etapa
         </Button>
       </Toolbar>
@@ -189,7 +152,7 @@ export default function ProjectWorkflowPage() {
           <Button 
             variant="contained" 
             startIcon={<Add />} 
-            onClick={() => handleOpenAddEditStageDialog()}
+            onClick={() => addEditStageDialogState.open()}
           >
             Adicionar etapa
           </Button>
@@ -199,35 +162,35 @@ export default function ProjectWorkflowPage() {
         <StageTable 
           key={stage.id}
           stage={stage}
-          handleOpenAddEditStageDialog={handleOpenAddEditStageDialog}
-          handleOpenDeleteStageDialog={handleOpenDeleteStageDialog}
+          handleOpenAddEditStageDialog={addEditStageDialogState.open}
+          handleOpenDeleteStageDialog={deleteStageDialogState.open}
         />
       ))}
       <AddEditStageDialog
-        isOpen={isAddEditStageDialogOpen} 
-        mode={targetStage ? 'edit' : 'add'} 
-        cancelHandler={handleCloseAddEditStageDialog}
+        isOpen={addEditStageDialogState.isOpen} 
+        mode={addEditStageDialogState.subject ? 'edit' : 'add'} 
+        cancelHandler={addEditStageDialogState.close}
         submitHandler={handleSubmitAddEditStageForm}
-        editingData={targetStage}
+        editingData={addEditStageDialogState.subject}
       />
       <AddEditWorkflowDialog
-        isOpen={isEditWorkflowDialogOpen} 
+        isOpen={editWorkflowDialogState.isOpen} 
         mode={'edit'} 
-        cancelHandler={handleCloseEditWorkflowDialog}
+        cancelHandler={editWorkflowDialogState.close}
         submitHandler={handleSubmitEditWorkflowForm}
         editingData={workflow}
       />
       <DeleteDialog 
-        isOpen={isDeleteStageDialogOpen}
-        description={`etapa "${targetStage?.name}"`}
+        isOpen={deleteStageDialogState.isOpen}
+        description={`etapa "${deleteStageDialogState.subject?.name}"`}
         confirmHandler={handleDeleteStage}
-        cancelHandler={handleCloseDeleteStageDialog}
+        cancelHandler={deleteStageDialogState.close}
       />
       <DeleteDialog 
-        isOpen={isDeleteWorkflowDialogOpen}
+        isOpen={deleteWorkflowDialogState.isOpen}
         description={'este workflow'}
         confirmHandler={handleDeleteWorkflow}
-        cancelHandler={handleCloseDeleteWorkflowDialog}
+        cancelHandler={deleteWorkflowDialogState.close}
       />
     </> 
   )
