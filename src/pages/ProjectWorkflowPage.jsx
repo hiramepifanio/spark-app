@@ -1,11 +1,15 @@
-import { Avatar, AvatarGroup, Box, Button, Card, CardActionArea, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
-import { use, useEffect, useState } from "react";
+import { Box, Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
+import { use, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { Add, Delete, Edit, MoreVert } from "@mui/icons-material";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Add, Delete, Edit } from "@mui/icons-material";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { useFetch } from "../hooks/useFetch";
 import { useAPI } from "../hooks/useAPI";
+import DeleteDialog from "../components/DeleteDialog";
+import AddEditStageDialog from "../components/AddEditStageDialog";
+import AddEditWorkflowDialog from "../components/AddEditWorkflowDialog";
+import StageTable from "../components/StageTable";
 
 export default function ProjectWorkflowPage() {
   const { projectWorkflowId } = useParams();
@@ -192,156 +196,39 @@ export default function ProjectWorkflowPage() {
         </Box>
       )}
       {workflow?.stages.map(stage => (
-        <Box key={stage.id} className="w-full !mb-4">
-          <Paper className="w-full">
-            <Toolbar className="bg-gray-200 !px-4">
-              <Typography className="!mr-2" component={'div'} variant="h6">{stage.name}</Typography>
-              <Typography className="!mr-2" component={'div'} variant="body2">
-                {`(${stage.projects.length})`}
-              </Typography>
-              <Box className='grow' />
-              <IconButton>
-                <Edit onClick={() => handleOpenAddEditStageDialog(stage)}/>
-              </IconButton>
-              <IconButton onClick={() => handleOpenDeleteStageDialog(stage)}>
-                <Delete />
-              </IconButton>
-            </Toolbar>
-            {stage.projects.length > 0 &&
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>
-                        Nome
-                      </TableCell>
-                      <TableCell>
-                        Descrição
-                      </TableCell>
-                      <TableCell>
-                        Dono
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {stage.projects.map(project => (
-                      <TableRow
-                        key={project.name}
-                        hover
-                        onClick={() => console.log('click')}
-                      >
-                        <TableCell>
-                          {project.name}
-                        </TableCell>
-                        <TableCell>
-                          {project.description}
-                        </TableCell>
-                        <TableCell>
-                          {project.name}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            }
-          </Paper>
-        </Box>
+        <StageTable 
+          key={stage.id}
+          stage={stage}
+          handleOpenAddEditStageDialog={handleOpenAddEditStageDialog}
+          handleOpenDeleteStageDialog={handleOpenDeleteStageDialog}
+        />
       ))}
-      <Dialog 
-        open={isAddEditStageDialogOpen} 
-        onClose={handleCloseAddEditStageDialog} 
-        disableRestoreFocus
-      >
-        <DialogTitle>{targetStage ? 'Editar etapa' : 'Adicionar etapa'}</DialogTitle>
-        <DialogContent className="w-md" >
-          <DialogContentText mb={2}>
-            {
-              targetStage ? 
-              'Edite os dados da etapa' : 
-              'Adicione uma nova etapa para seus projetos'
-            }
-          </DialogContentText>
-          <Box component="form" onSubmit={handleSubmitAddEditStageForm} id="add-edit-stage-form">
-            <TextField
-              id="name"
-              name="name"
-              label="Nome"
-              placeholder="Digite o nome da etapa"
-              type="text"
-              required
-              autoFocus
-              fullWidth
-              defaultValue={targetStage?.name || ""}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleCloseAddEditStageDialog}>Cancelar</Button>
-          <Button variant="contained" type="submit" form="add-edit-stage-form">
-            {targetStage ? 'Salvar' : 'Adicionar'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog 
-        open={isEditWorkflowDialogOpen} 
-        onClose={handleCloseEditWorkflowDialog} 
-        disableRestoreFocus
-      >
-        <DialogTitle>Editar Workflow</DialogTitle>
-        <DialogContent className="w-md" >
-          <DialogContentText mb={2}>Edite os dados do workflow</DialogContentText>
-          <Box component="form" onSubmit={handleSubmitEditWorkflowForm} id="edit-workflow-form">
-            <TextField
-              id="name"
-              name="name"
-              label="Nome"
-              placeholder="Digite o nome do workflow"
-              type="text"
-              required
-              autoFocus
-              fullWidth
-              defaultValue={workflow?.name}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleCloseEditWorkflowDialog}>Cancelar</Button>
-          <Button variant="contained" type="submit" form="edit-workflow-form">Salvar</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog 
-        open={isDeleteStageDialogOpen} 
-        onClose={handleCloseDeleteStageDialog} 
-        disableRestoreFocus
-        maxWidth='sm'
-        fullWidth={true}
-      >
-        <DialogTitle>Você tem certeza que deseja excluir etapa "{targetStage?.name}"?</DialogTitle>
-        <DialogContent >
-          <DialogContentText mb={2}>Esta ação é irreversível e pode levar a perda de dados.</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleCloseDeleteStageDialog}>Cancelar</Button>
-          <Button variant="contained" onClick={handleDeleteStage}>Confirmar</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog 
-        open={isDeleteWorkflowDialogOpen} 
-        onClose={handleCloseDeleteWorkflowDialog} 
-        disableRestoreFocus
-        maxWidth='sm'
-        fullWidth={true}
-      >
-        <DialogTitle>Você tem certeza que deseja excluir este workflow?</DialogTitle>
-        <DialogContent >
-          <DialogContentText mb={2}>Esta ação é irreversível e pode levar a perda de dados.</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleCloseDeleteWorkflowDialog}>Cancelar</Button>
-          <Button variant="contained" onClick={handleDeleteWorkflow}>Confirmar</Button>
-        </DialogActions>
-      </Dialog>
+      <AddEditStageDialog
+        isOpen={isAddEditStageDialogOpen} 
+        mode={targetStage ? 'edit' : 'add'} 
+        cancelHandler={handleCloseAddEditStageDialog}
+        submitHandler={handleSubmitAddEditStageForm}
+        editingData={targetStage}
+      />
+      <AddEditWorkflowDialog
+        isOpen={isEditWorkflowDialogOpen} 
+        mode={'edit'} 
+        cancelHandler={handleCloseEditWorkflowDialog}
+        submitHandler={handleSubmitEditWorkflowForm}
+        editingData={workflow}
+      />
+      <DeleteDialog 
+        isOpen={isDeleteStageDialogOpen}
+        description={`etapa "${targetStage?.name}"`}
+        confirmHandler={handleDeleteStage}
+        cancelHandler={handleCloseDeleteStageDialog}
+      />
+      <DeleteDialog 
+        isOpen={isDeleteWorkflowDialogOpen}
+        description={'este workflow'}
+        confirmHandler={handleDeleteWorkflow}
+        cancelHandler={handleCloseDeleteWorkflowDialog}
+      />
     </> 
   )
 }

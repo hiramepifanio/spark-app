@@ -1,0 +1,24 @@
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+
+export default function AddEditDialog({ isOpen, mode, description, cancelHandler, submitHandler, children }) {
+  return (
+    <Dialog 
+      open={isOpen} 
+      onClose={cancelHandler} 
+      disableRestoreFocus
+    >
+      <DialogTitle>{mode === 'edit' ? 'Editar' : 'Adicionar'} {description}</DialogTitle>
+      <DialogContent className="w-md" >
+        <Box mt={1} component="form" onSubmit={submitHandler} id="form">
+          {children}
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={cancelHandler}>Cancelar</Button>
+        <Button variant="contained" type="submit" form="form">
+          {mode === 'edit' ? 'Salvar' : 'Adicionar'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
