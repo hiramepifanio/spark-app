@@ -8,10 +8,10 @@ interface UseFetchResult<T> {
     errors: unknown | null
 }
 
-export function useFetch<T>(endpoint: string): UseFetchResult<T> {
+export function useFetch<T>(endpoint: string, initialState: T): UseFetchResult<T> {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errors, setErrors] = useState<unknown | null>(null)
-  const [fetchedData, setFetchedData] = useState<T | null>(null)
+  const [fetchedData, setFetchedData] = useState<T | null>(initialState)
   const { get } = useAPI()
 
   useEffect(() => {
