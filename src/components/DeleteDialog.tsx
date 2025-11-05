@@ -1,6 +1,13 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
-export default function DeleteDialog({ isOpen, description, cancelHandler, confirmHandler }) {
+interface DeleteDialogProps {
+  isOpen: boolean
+  description: string
+  confirmHandler: () => void
+  cancelHandler: () => void
+}
+
+export default function DeleteDialog({ isOpen, description, cancelHandler, confirmHandler }: DeleteDialogProps) {
   return (
     <Dialog 
         open={isOpen} 

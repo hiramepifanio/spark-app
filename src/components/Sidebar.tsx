@@ -1,10 +1,16 @@
 import { AuthContext } from '../contexts/AuthContext'
-import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SvgIconProps } from '@mui/material'
 import { Dashboard, Group, Logout, Settings, ViewKanban } from '@mui/icons-material'
 import { Link, useLocation } from 'react-router-dom'
-import { useContext } from 'react'
+import { ReactElement, useContext } from 'react'
 
-const items = [
+interface generalNavigationItem {
+  to: string
+  label: string
+  icon: ReactElement<SvgIconProps>
+}
+
+const items: generalNavigationItem[] = [
   {
     to: '/dashboard',
     label: 'Dashboard',
@@ -31,7 +37,7 @@ export default function Sidebar() {
   const { authDispatch } = useContext(AuthContext)
   const location = useLocation();
   
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     authDispatch({ type: 'LOGOUT' }); 
   };
 
