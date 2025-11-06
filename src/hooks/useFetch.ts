@@ -8,7 +8,7 @@ interface UseFetchResult<T> {
     errors: unknown | null
 }
 
-export function useFetch<T>(endpoint: string, initialState: T): UseFetchResult<T> {
+export function useFetch<T>(endpoint: string, initialState: T | null = null): UseFetchResult<T> {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errors, setErrors] = useState<unknown | null>(null)
   const [fetchedData, setFetchedData] = useState<T | null>(initialState)
@@ -17,7 +17,7 @@ export function useFetch<T>(endpoint: string, initialState: T): UseFetchResult<T
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true)
-      console.log(endpoint)
+      console.log()
 
       const { status, isOk, data, errors } = await get<T>(endpoint)
       

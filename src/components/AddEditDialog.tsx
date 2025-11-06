@@ -1,6 +1,26 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { FormEventHandler, ReactNode } from "react";
 
-export default function AddEditDialog({ isOpen, mode, description, cancelHandler, submitHandler, children }) {
+export type AddEditDialogMode = 'add' | 'edit'
+
+export interface AddEditObjectDialogProps<T> {
+  isOpen: boolean
+  mode: AddEditDialogMode 
+  cancelHandler: () => void 
+  submitHandler: FormEventHandler<HTMLFormElement> 
+  editingData: T | null
+}
+
+interface AddEditDialogProps {
+  isOpen: boolean
+  mode: AddEditDialogMode
+  description: string
+  cancelHandler: () => void 
+  submitHandler: FormEventHandler<HTMLFormElement>
+  children: ReactNode
+}
+
+export default function AddEditDialog({ isOpen, mode, description, cancelHandler, submitHandler, children }: AddEditDialogProps) {
   return (
     <Dialog 
       open={isOpen} 

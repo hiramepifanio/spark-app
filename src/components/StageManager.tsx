@@ -1,34 +1,41 @@
 import { Add } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import StageTable from "./StageTable";
-import { useDialogState } from "../hooks/useDialogState";
+import { DialogState, useDialogState } from "../hooks/useDialogState";
 import DeleteDialog from "./DeleteDialog";
 import { useAPI } from "../hooks/useAPI";
 import { useSnackbar } from "notistack";
 import { useFetch } from "../hooks/useFetch";
 import AddEditStageDialog from "./AddEditStageDialog";
+import { Stage } from "../models/stage";
+import { FormEvent } from "react";
 
-export default function StageManager({ addEditStageDialogState, workflowId }) {
+interface StageManagerProps {
+  workflowId: number
+  addEditStageDialogState: DialogState<Stage>
+}
+
+export default function StageManager({ addEditStageDialogState, workflowId }: StageManagerProps) {
   const { enqueueSnackbar } = useSnackbar();
-  const deleteStageDialogState = useDialogState()
+  const deleteStageDialogState = useDialogState<Stage>()
   const { post, put, del } = useAPI()
 
   const {isLoading, fetchedData: stages, setFetchedData: setStages} = (
-    useFetch(`/project-workflows/${workflowId}/project-stages/`, [])
+    useFetch<Stage[]>(`/project-workflows/${workflowId}/project-stages/`, [])
   )
 
-  async function handleSubmitAddEditStageForm(event) {
+  async function handleSubmitAddEditStageForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     
-    const formData = new FormData(event.target)
+    const formData = new FormData(event.currentTarget)
     const payload = Object.fromEntries(formData.entries())
 
     const { isOk, data } = (addEditStageDialogState.subject ? 
-      await put(`/project-workflows/${workflowId}/project-stages/${addEditStageDialogState.subject.id}/`, payload) :
-      await post(`/project-workflows/${workflowId}/project-stages/`, payload)
+      await put<Stage>(`/project-workflows/${workflowId}/project-stages/${addEditStageDialogState.subject.id}/`, payload) :
+      await post<Stage>(`/project-workflows/${workflowId}/project-stages/`, payload)
     )
 
-    if (!isOk) {
+    if (!isOk || data === null) {
       const message = (addEditStageDialogState.subject ?
         'Houve algum erro durante a atualização da etapa':
         'Houve algum erro durante a criação de nova etapa'
@@ -39,17 +46,18 @@ export default function StageManager({ addEditStageDialogState, workflowId }) {
     }
 
     if (addEditStageDialogState.subject) {
-      setStages(prevStages => prevStages.map(stage => stage.id === addEditStageDialogState.subject.id ? data : stage))
+      const subject = addEditStageDialogState.subject
+      setStages(prevStages => prevStages ? prevStages.map(stage => stage.id === subject.id ? data : stage) : null)
       enqueueSnackbar('Etapa atualizada com sucesso', { variant: 'success' })
     } else {
-      setStages(prevStages => [...prevStages, data])
+      setStages(prevStages => prevStages ? [...prevStages, data] : [data])
       enqueueSnackbar('Etapa adicionada com sucesso', { variant: 'success' })
     }
     addEditStageDialogState.close()
   }
 
-  async function handleDeleteStage() {
-    const { isOk } = await del(`/project-workflows/${workflowId}/project-stages/${deleteStageDialogState.subject.id}/`)
+  async function handleDeleteStage(id: number) {
+    const { isOk } = await del(`/project-workflows/${workflowId}/project-stages/${id}/`)
 
     if (!isOk) {
       enqueueSnackbar('Houve algum erro durante a remoção da etapa', { variant: 'error' })
@@ -58,15 +66,13 @@ export default function StageManager({ addEditStageDialogState, workflowId }) {
     }
 
     enqueueSnackbar('Etapa removida com sucesso', { variant: 'success' })
-    setStages(prevStages => (
-      prevStages.filter(stage => stage.id !== deleteStageDialogState.subject.id)
-    ))
+    setStages(prevStages => prevStages ? prevStages.filter(stage => stage.id !== id) : null)
     deleteStageDialogState.close()
   }
 
   return (
     <>
-      {(!isLoading && stages.length === 0) && (
+      {(!isLoading && (!stages || stages.length === 0)) && (
         <Box
           className="flex flex-col items-center justify-center !py-20 text-center !border-2 border-dashed !border-gray-300 rounded-2xl"
         >
@@ -85,7 +91,7 @@ export default function StageManager({ addEditStageDialogState, workflowId }) {
           </Button>
         </Box>
       )}
-      {!isLoading && stages.map(stage => (
+      {!isLoading && stages && stages.map(stage => (
         <StageTable 
           key={stage.id}
           stage={stage}
@@ -103,7 +109,11 @@ export default function StageManager({ addEditStageDialogState, workflowId }) {
       <DeleteDialog 
         isOpen={deleteStageDialogState.isOpen}
         description={`etapa "${deleteStageDialogState.subject?.name}"`}
-        confirmHandler={handleDeleteStage}
+        confirmHandler={() => {
+          if (deleteStageDialogState.subject) {
+            handleDeleteStage(deleteStageDialogState.subject.id)
+          }
+        }}
         cancelHandler={deleteStageDialogState.close}
       />
     </>

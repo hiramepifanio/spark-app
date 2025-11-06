@@ -1,14 +1,14 @@
 import { useState } from "react";
 
-interface DialogState<T> {
+export interface DialogState<T> {
   isOpen: boolean
-  open: (subject: T) => void
+  open: (subject?: T | null) => void
   close: () => void
   subject: T | null
 }
 
-export function useDialogState<T>(initialState: boolean): DialogState<T> {
-  const [isOpen, setIsOpen] = useState<boolean>(initialState)
+export function useDialogState<T>(): DialogState<T> {
+  const [isOpen, setIsOpen] = useState(false)
   const [subject, setSubject] = useState<T | null>(null)
   
   function open(subject: T | null = null): void {
@@ -21,10 +21,5 @@ export function useDialogState<T>(initialState: boolean): DialogState<T> {
     setSubject(null)
   }
 
-  return {
-    isOpen,
-    open,
-    close,
-    subject
-  }
+  return { isOpen, open, close, subject }
 }

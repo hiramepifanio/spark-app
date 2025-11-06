@@ -8,23 +8,32 @@ interface FetchOptions extends RequestInit {
   headers?: Record<string, string>
 }
 
-interface ApiResponse<T> {
+interface ApiSuccessResponse<R> {
   status: number
-  isOk: boolean
-  data: T | null
-  errors: unknown | null
+  isOk: true
+  data: R
+  errors: null
 }
+
+interface ApiErrorResponse {
+  status: number
+  isOk: false
+  data: null
+  errors: unknown
+}
+
+export type ApiResponse<R> = ApiSuccessResponse<R> | ApiErrorResponse
 
 export function useAPI() {
   const { authState } = use(AuthContext)
   const token = authState.access
 
-  async function call<T>(
+  async function call<R>(
     endpoint: string, 
     method: HttpMethod, 
     options: FetchOptions, 
     payload?: unknown
-  ): Promise<ApiResponse<T>> {
+  ): Promise<ApiResponse<R>> {
     let _options: FetchOptions = {
       method,
       headers: {
@@ -40,101 +49,45 @@ export function useAPI() {
     }
 
     const response = await fetch(`${BASE_URL}${endpoint}`, _options)
-    let json: T | null = null
+    let json: unknown = null
     try {
       json = await response.json()
     } catch {
 
     }
 
+    if (!response.ok) {
+      return {
+        status: response.status,
+        isOk: false,
+        data: null,
+        errors: json,
+      }
+    }
+
     return {
       status: response.status,
-      isOk: response.ok,
-      data: response.ok ? json : null,
-      errors: response.ok ? null : json
+      isOk: true,
+      data: json as R,
+      errors: null,
     }
   }
 
-  async function get<T>(endpoint: string, options:FetchOptions = {}): Promise<ApiResponse<T>> {
-    return call(endpoint, 'GET', options)
+  async function get<R>(endpoint: string, options:FetchOptions = {}): Promise<ApiResponse<R>> {
+    return call<R>(endpoint, 'GET', options)
   }
 
-  async function post(endpoint: string, payload: unknown, options:FetchOptions = {}) {
-    return call(endpoint, 'POST', options, payload)
+  async function post<R>(endpoint: string, payload: unknown, options:FetchOptions = {}): Promise<ApiResponse<R>> {
+    return call<R>(endpoint, 'POST', options, payload)
   }
 
-  async function put(endpoint: string, payload: unknown, options:FetchOptions = {}) {
-    return call(endpoint, 'PUT', options, payload)
+  async function put<R>(endpoint: string, payload: unknown, options:FetchOptions = {}): Promise<ApiResponse<R>> {
+    return call<R>(endpoint, 'PUT', options, payload)
   }
 
-  async function del(endpoint: string, options = {}) {
-    return call(endpoint, 'DELETE', options)
+  async function del<R>(endpoint: string, options = {}): Promise<ApiResponse<R>> {
+    return call<R>(endpoint, 'DELETE', options)
   }
 
   return { get, post, put, del }
 }
-
-
-// import { use } from "react"
-// import { AuthContext } from "../contexts/AuthContext"
-
-// const BASE_URL = 'http://localhost:8000'
-// const GET = 'GET'
-// const POST = 'POST'
-// const PUT = 'PUT'
-// const DELETE = 'DELETE'
-
-// export function useAPI() {
-//   const { authState } = use(AuthContext)
-//   const token = authState.access
-
-//   async function call(endpoint, method, payload, options) {
-//     let _options = {
-//       method,
-//       headers: {
-//         "Content-Type": "application/json",
-//         ...(token && { Authorization: `Bearer ${token}` }),
-//         ...options.headers,
-//       },
-//       ...options,
-//     }
-
-//     if (payload) {
-//       console.log('pay', payload)
-//       _options.body = JSON.stringify(payload)
-//     }
-
-//     const response = await fetch(`${BASE_URL}${endpoint}`, _options)
-//     let json = null
-//     try {
-//       json = await response.json()
-//     } catch {
-
-//     }
-
-//     return {
-//       status: response.status,
-//       isOk: response.ok,
-//       data: response.ok ? json : null,
-//       errors: response.ok ? null : json,
-//     }
-//   }
-
-//   async function get(endpoint, options = {}) {
-//     return call(endpoint, GET, null, options=options)
-//   }
-
-//   async function post(endpoint, payload, options = {}) {
-//     return call(endpoint, POST, payload, options=options)
-//   }
-
-//   async function put(endpoint, payload, options = {}) {
-//     return call(endpoint, PUT, payload, options=options)
-//   }
-
-//   async function del(endpoint, options = {}) {
-//     return call(endpoint, DELETE, null, options=options)
-//   }
-
-//   return { get, post, put, del }
-// }

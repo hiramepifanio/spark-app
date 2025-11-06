@@ -1,12 +1,19 @@
 import { Delete, Edit } from "@mui/icons-material";
 import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
 import { useFetch } from "../hooks/useFetch";
+import { Stage } from "../models/stage";
+import { Project } from "../models/project";
 
+interface StageTableProps {
+  stage: Stage
+  handleOpenAddEditStageDialog: (Stage: Stage | null) => void
+  handleOpenDeleteStageDialog: (Stage: Stage) => void
+}
 
-export default function StageTable({ stage, handleOpenAddEditStageDialog, handleOpenDeleteStageDialog }) {
+export default function StageTable({ stage, handleOpenAddEditStageDialog, handleOpenDeleteStageDialog }: StageTableProps) {
   
   const {isLoading, fetchedData: projects, setFetchedData: setProjects} = (
-    useFetch(`/project-workflows/${stage.projectWorkflow}/project-stages/${stage.id}/projects/`, [])
+    useFetch<Project[]>(`/project-workflows/${stage.projectWorkflow}/project-stages/${stage.id}/projects/`, [])
   )
 
   return (
@@ -15,7 +22,7 @@ export default function StageTable({ stage, handleOpenAddEditStageDialog, handle
         <Toolbar className="bg-gray-200 !px-4">
           <Typography className="!mr-2" component={'div'} variant="h6">{stage.name}</Typography>
           <Typography className="!mr-2" component={'div'} variant="body2">
-            {`(${projects.length})`}
+            {`(${projects?.length})`}
           </Typography>
           <Box className='grow' />
           <IconButton>
@@ -25,7 +32,7 @@ export default function StageTable({ stage, handleOpenAddEditStageDialog, handle
             <Delete />
           </IconButton>
         </Toolbar>
-        {projects.length > 0 &&
+        {(projects !== null && projects.length > 0) &&
           <TableContainer>
             <Table>
               <TableHead>

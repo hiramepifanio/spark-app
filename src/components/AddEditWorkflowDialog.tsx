@@ -1,8 +1,8 @@
 import { TextField } from "@mui/material";
-import AddEditDialog from "./AddEditDialog";
+import AddEditDialog, { AddEditObjectDialogProps } from "./AddEditDialog";
+import { Workflow } from "../models/workflow";
 
-
-export default function AddEditWorkflowDialog({ isOpen, mode, cancelHandler, submitHandler, editingData }) {
+export default function AddEditWorkflowDialog({ isOpen, mode, cancelHandler, submitHandler, editingData }: AddEditObjectDialogProps<Workflow>) {
   return (
     <AddEditDialog
       isOpen={isOpen} 

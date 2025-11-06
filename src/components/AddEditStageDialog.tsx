@@ -1,8 +1,9 @@
 import { TextField } from "@mui/material";
-import AddEditDialog from "./AddEditDialog";
+import AddEditDialog, { AddEditDialogMode, AddEditObjectDialogProps } from "./AddEditDialog";
+import { FormEventHandler } from "react";
+import { Stage } from "../models/stage";
 
-
-export default function AddEditStageDialog({ isOpen, mode, cancelHandler, submitHandler, editingData }) {
+export default function AddEditStageDialog({ isOpen, mode, cancelHandler, submitHandler, editingData }: AddEditObjectDialogProps<Stage>) {
   return (
     <AddEditDialog
       isOpen={isOpen} 
