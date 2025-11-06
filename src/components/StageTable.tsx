@@ -25,8 +25,8 @@ export default function StageTable({ stage, handleOpenAddEditStageDialog, handle
             {`(${projects?.length})`}
           </Typography>
           <Box className='grow' />
-          <IconButton>
-            <Edit onClick={() => handleOpenAddEditStageDialog(stage)}/>
+          <IconButton onClick={() => handleOpenAddEditStageDialog(stage)}>
+            <Edit/>
           </IconButton>
           <IconButton onClick={() => handleOpenDeleteStageDialog(stage)}>
             <Delete />

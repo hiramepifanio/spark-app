@@ -67,8 +67,8 @@ export default function WorkflowPageHeader({ workflowId, handleOpenAddStageDialo
     <>
       <Toolbar className="!px-0" >
         <Typography className="!mr-2" variant="h4" component={'h1'}>{!isLoadingWorkflow && workflow ? workflow.name : 'Loading'}</Typography>
-        <IconButton>
-          <Edit onClick={editWorkflowDialogState.open} />
+        <IconButton onClick={editWorkflowDialogState.open}>
+          <Edit/>
         </IconButton>
         <IconButton onClick={deleteWorkflowDialogState.open}>
           <Delete />
