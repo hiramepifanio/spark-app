@@ -11,30 +11,34 @@ import UnauthenticatedRoute from "./components/UnauthenticatedRoute/Unauthentica
 import { SnackbarProvider } from 'notistack';
 import ProjectWorkflowsPage from "./pages/ProjectWorkflowsPage"
 import ProjectWorkflowPage from "./pages/ProjectWorkflowPage"
+import { ThemeProvider } from "@mui/material"
+import { muiTheme } from "./theme/muiTheme"
 
 function App() {
   return (
-    <AuthProvider>
-      <SnackbarProvider anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-        <Routes>
-          <Route element={<UnauthenticatedRoute />}>
-            <Route path='/register' element={<RegistrationPage />} />
-            <Route path='/login' element={<LoginPage />} />
-          </Route>
-
-          <Route element={<PrivateRoute />}>
-            <Route element={<Layout />}>
-              <Route path='/' element={<Navigate to='/dashboard' replace />} />
-              <Route path='/dashboard' element={<DashboardPage />} />
-              <Route path='/project-workflows' element={<ProjectWorkflowsPage />} />
-              <Route path='/project-workflows/:workflowId' element={<ProjectWorkflowPage />} />
-              <Route path='/meetings' element={<MeetingsPage />} />
-              <Route path='/settings' element={<SettingsPage />} />
+    <ThemeProvider theme={muiTheme}>
+      <AuthProvider>
+        <SnackbarProvider anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
+          <Routes>
+            <Route element={<UnauthenticatedRoute />}>
+              <Route path='/register' element={<RegistrationPage />} />
+              <Route path='/login' element={<LoginPage />} />
             </Route>
-          </Route>
-        </Routes>
-      </SnackbarProvider>
-    </AuthProvider>
+
+            <Route element={<PrivateRoute />}>
+              <Route element={<Layout />}>
+                <Route path='/' element={<Navigate to='/dashboard' replace />} />
+                <Route path='/dashboard' element={<DashboardPage />} />
+                <Route path='/project-workflows' element={<ProjectWorkflowsPage />} />
+                <Route path='/project-workflows/:workflowId' element={<ProjectWorkflowPage />} />
+                <Route path='/meetings' element={<MeetingsPage />} />
+                <Route path='/settings' element={<SettingsPage />} />
+              </Route>
+            </Route>
+          </Routes>
+        </SnackbarProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 
