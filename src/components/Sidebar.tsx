@@ -1,6 +1,6 @@
 import { AuthContext } from '../contexts/AuthContext'
 import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SvgIconProps } from '@mui/material'
-import { Dashboard, Group, Logout, Settings, ViewKanban } from '@mui/icons-material'
+import { Business, Dashboard, Group, GroupWork, Logout, Settings, ViewKanban } from '@mui/icons-material'
 import { Link, useLocation } from 'react-router-dom'
 import { ReactElement, useContext } from 'react'
 
@@ -20,6 +20,11 @@ const items: generalNavigationItem[] = [
     to: '/project-workflows',
     label: 'Workflows',
     icon: <ViewKanban />
+  },
+  {
+    to: '/partners',
+    label: 'Parceiros',
+    icon: <Business />
   },
   {
     to: '/meetings',

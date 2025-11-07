@@ -25,7 +25,7 @@ export default function WorkflowPageHeader({ workflowId, handleOpenAddStageDialo
   const editWorkflowDialogState = useDialogState()
   const deleteWorkflowDialogState = useDialogState()
 
-  const {isLoading: isLoadingWorkflow, fetchedData: workflow, setFetchedData: setWorkflow} = useFetch<Workflow>(`/project-workflows/${workflowId}/`)
+  const {isLoading: isLoadingWorkflow, data: workflow, setData: setWorkflow} = useFetch<Workflow>(`/project-workflows/${workflowId}/`)
 
   async function handleSubmitEditWorkflowForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

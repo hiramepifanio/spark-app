@@ -3,15 +3,15 @@ import { useAPI } from "./useAPI"
 
 interface UseFetchResult<T> {
     isLoading: boolean
-    fetchedData: T | null
-    setFetchedData: Dispatch<SetStateAction<T | null>>
+    data: T | null
+    setData: Dispatch<SetStateAction<T | null>>
     errors: unknown | null
 }
 
 export function useFetch<T>(endpoint: string, initialState: T | null = null): UseFetchResult<T> {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errors, setErrors] = useState<unknown | null>(null)
-  const [fetchedData, setFetchedData] = useState<T | null>(initialState)
+  const [data, setData] = useState<T | null>(initialState)
   const { get } = useAPI()
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export function useFetch<T>(endpoint: string, initialState: T | null = null): Us
       const { status, isOk, data, errors } = await get<T>(endpoint)
       
       if(isOk) {
-        setFetchedData(data)
+        setData(data)
       } else {
         setErrors(errors)
       }
@@ -35,8 +35,8 @@ export function useFetch<T>(endpoint: string, initialState: T | null = null): Us
 
   return {
     isLoading,
-    fetchedData,
-    setFetchedData,
+    data,
+    setData,
     errors
   }
 }

@@ -2,12 +2,12 @@ import { TextField } from "@mui/material";
 import AddEditDialog, { AddEditObjectDialogProps } from "./AddEditDialog";
 import { Stage } from "../models/stage";
 
-export default function AddEditStageDialog({ isOpen, mode, cancelHandler, submitHandler, editingData }: AddEditObjectDialogProps<Stage>) {
+export default function AddEditPartnerDialog({ isOpen, mode, cancelHandler, submitHandler, editingData }: AddEditObjectDialogProps<Stage>) {
   return (
     <AddEditDialog
       isOpen={isOpen} 
       mode={mode} 
-      description={'etapa'} 
+      description={'parceiro'} 
       cancelHandler={cancelHandler}
       submitHandler={submitHandler}
     >
@@ -15,7 +15,7 @@ export default function AddEditStageDialog({ isOpen, mode, cancelHandler, submit
           id="name"
           name="name"
           label="Nome"
-          placeholder="Digite o nome da etapa"
+          placeholder="Digite o nome da instituição parceira"
           type="text"
           required
           autoFocus

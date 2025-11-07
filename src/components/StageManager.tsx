@@ -20,7 +20,7 @@ export default function StageManager({ addEditStageDialogState, workflowId }: St
   const deleteStageDialogState = useDialogState<Stage>()
   const { post, put, del } = useAPI()
 
-  const {isLoading, fetchedData: stages, setFetchedData: setStages} = (
+  const {isLoading, data: stages, setData: setStages} = (
     useFetch<Stage[]>(`/project-workflows/${workflowId}/project-stages/`, [])
   )
 

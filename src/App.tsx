@@ -13,6 +13,7 @@ import ProjectWorkflowsPage from "./pages/ProjectWorkflowsPage"
 import ProjectWorkflowPage from "./pages/ProjectWorkflowPage"
 import { ThemeProvider } from "@mui/material"
 import { muiTheme } from "./theme/muiTheme"
+import PartnersPage from "./pages/PartnersPage"
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
                 <Route path='/dashboard' element={<DashboardPage />} />
                 <Route path='/project-workflows' element={<ProjectWorkflowsPage />} />
                 <Route path='/project-workflows/:workflowId' element={<ProjectWorkflowPage />} />
+                <Route path='/partners' element={<PartnersPage />} />
                 <Route path='/meetings' element={<MeetingsPage />} />
                 <Route path='/settings' element={<SettingsPage />} />
               </Route>

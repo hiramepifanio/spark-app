@@ -12,7 +12,7 @@ interface StageTableProps {
 
 export default function StageTable({ stage, handleOpenAddEditStageDialog, handleOpenDeleteStageDialog }: StageTableProps) {
   
-  const {isLoading, fetchedData: projects, setFetchedData: setProjects} = (
+  const {isLoading, data: projects, setData: setProjects} = (
     useFetch<Project[]>(`/project-workflows/${stage.projectWorkflow}/project-stages/${stage.id}/projects/`, [])
   )
 
