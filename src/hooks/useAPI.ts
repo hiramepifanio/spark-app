@@ -19,10 +19,15 @@ interface ApiErrorResponse {
   status: number
   isOk: false
   data: null
-  errors: unknown
+  errors: Errors
 }
 
 export type ApiResponse<R> = ApiSuccessResponse<R> | ApiErrorResponse
+
+interface Errors {
+  detail: string
+  fields: Record<string, string>[]
+}
 
 export function useAPI() {
   const { authState } = use(AuthContext)
@@ -49,7 +54,7 @@ export function useAPI() {
     }
 
     const response = await fetch(`${BASE_URL}${endpoint}`, _options)
-    let json: unknown = null
+    let json: R | Errors | null = null
     try {
       json = await response.json()
     } catch {
@@ -61,7 +66,7 @@ export function useAPI() {
         status: response.status,
         isOk: false,
         data: null,
-        errors: json,
+        errors: json as Errors,
       }
     }
 

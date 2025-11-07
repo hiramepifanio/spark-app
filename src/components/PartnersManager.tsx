@@ -6,6 +6,7 @@ import AddEditPartnerDialog from "./AddEditPartnerDialog"
 import { useAPI } from "../hooks/useAPI"
 import { FormEvent } from "react"
 import { useSnackbar } from "notistack"
+import usePartnersActions, { AddPartnerOrganizationDTO } from "../hooks/usePartnersActions"
 
 const tags = [
   "IA",
@@ -26,26 +27,17 @@ interface PartnersManagerProps {
 }
 
 export default function PartnersManager({ addPartnerDialogState }: PartnersManagerProps) {
-  const { post } = useAPI()
-  const { enqueueSnackbar } = useSnackbar()
-  const {isLoading, data: partners, setData: setPartners} = useFetch<PartnerOrganization[]>(`/partner-organizations/`)
+  const { partners, isLoading, addPartner } = usePartnersActions()
 
   async function handleSubmitAddStageForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     
     const formData = new FormData(event.currentTarget)
-    const payload = Object.fromEntries(formData.entries())
-    
-    const { isOk, data } = await post<PartnerOrganization>('/partner-organizations/', payload)
-
-    if (!isOk || data == null) {
-      enqueueSnackbar('Houve algum erro durante o cadastro do parceiro', { variant: 'error' })
-      addPartnerDialogState.close()
-      return
+    const payload: AddPartnerOrganizationDTO = {
+      name: formData.get('name') as string,
     }
-
-    setPartners(prevPartners => prevPartners ? [...prevPartners, data] : [data])
-    enqueueSnackbar('Parceiro cadastrado com sucesso', { variant: 'success' })
+    
+    await addPartner(payload)
     addPartnerDialogState.close()
   }
 
