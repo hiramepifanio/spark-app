@@ -1,5 +1,5 @@
 import { useSnackbar } from "notistack"
-import { useAPI } from "./useAPI"
+import { ApiResponse, useAPI } from "./useAPI"
 import { PartnerOrganization } from "../models/partnerOrganization"
 import { useEffect, useState } from "react"
 
@@ -32,16 +32,20 @@ export default function usePartnersActions() {
     setIsLoading(false)
   }
 
-  async function addPartner(payload: AddPartnerOrganizationDTO) {
-    const { isOk, data } = await post<PartnerOrganization>('/partner-organizations/', payload)
+  async function addPartner(payload: AddPartnerOrganizationDTO): Promise<ApiResponse<PartnerOrganization>> {
+    const response = await post<PartnerOrganization>('/partner-organizations/', payload)
+    const { data, errors } = response
 
-    if (!isOk || data == null) {
-      enqueueSnackbar('Houve algum erro durante o cadastro do parceiro', { variant: 'error' })
-      return
-    }
+    if (errors) {
+      const message = errors.detail ?? 'Houve algum erro durante o cadastro do parceiro'
+      enqueueSnackbar(message, { variant: 'error' })
+      return response
+    } 
 
     setPartners(prevPartners => [...prevPartners, data])
     enqueueSnackbar('Parceiro cadastrado com sucesso', { variant: 'success' })
+
+    return response
   }
 
   return { partners, isLoading, addPartner }

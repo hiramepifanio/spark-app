@@ -37,7 +37,12 @@ export default function PartnersManager({ addPartnerDialogState }: PartnersManag
       name: formData.get('name') as string,
     }
     
-    await addPartner(payload)
+    const { errors } = await addPartner(payload)
+
+    if (errors) {
+
+    }
+
     addPartnerDialogState.close()
   }
 
