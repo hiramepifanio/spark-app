@@ -1,12 +1,13 @@
-import { Avatar, Card, CardActionArea, CardContent, CardHeader, Chip, Grid, Stack } from "@mui/material"
+import { Avatar, Box, Button, Card, CardActionArea, CardContent, CardHeader, Chip, Grid, IconButton, Stack, Tab, Tabs, TextField, Toolbar, Typography } from "@mui/material"
 import { useFetch } from "../hooks/useFetch"
 import { PartnerOrganization } from "../models/partnerOrganization"
 import { DialogState } from "../hooks/useDialogState"
 import AddEditPartnerDialog from "./AddEditPartnerDialog"
 import { useAPI } from "../hooks/useAPI"
-import { FormEvent } from "react"
+import { FormEvent, useState } from "react"
 import { useSnackbar } from "notistack"
 import usePartnersActions, { AddPartnerOrganizationDTO } from "../hooks/usePartnersActions"
+import { Add, FilterList, Search } from "@mui/icons-material"
 
 const tags = [
   "IA",
@@ -28,6 +29,7 @@ interface PartnersManagerProps {
 
 export default function PartnersManager({ addPartnerDialogState }: PartnersManagerProps) {
   const { partners, isLoading, addPartner } = usePartnersActions()
+  const [value, setValue] = useState<number>(0);
 
   async function handleSubmitAddStageForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -45,10 +47,37 @@ export default function PartnersManager({ addPartnerDialogState }: PartnersManag
 
     addPartnerDialogState.close()
   }
+  
+  function handleChange(event: React.SyntheticEvent, newValue: number) {
+    setValue(newValue)
+  }
 
   return(
     <>
-      <Grid container spacing={2}>
+      <Toolbar disableGutters className="justify-between !mb-4" >
+        <Tabs value={value} onChange={handleChange} aria-label="view mode tabs">
+          <Tab label="Galeria" />
+          <Tab label="Tabela" />
+          <Tab label="Quadro" />
+        </Tabs>
+        <Stack direction="row" spacing={1} alignItems="center" color="text.secondary">
+          <IconButton color="inherit">
+            <Search />
+          </IconButton>
+          <IconButton color="inherit">
+            <FilterList />
+          </IconButton>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => addPartnerDialogState.open(null)}
+          >
+            Parceiro
+          </Button>
+        </Stack>
+      </Toolbar>
+      {value === 0 &&
+        <Grid container spacing={2}>
         {!isLoading && partners!.map(partner => (
           <Grid key={partner.id} size={4}>
             <Card>
@@ -76,6 +105,8 @@ export default function PartnersManager({ addPartnerDialogState }: PartnersManag
           </Grid>
         ))}
       </Grid>
+      }
+      
       <AddEditPartnerDialog 
         isOpen={addPartnerDialogState.isOpen} 
         mode={'add'} 

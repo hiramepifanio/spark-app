@@ -1,5 +1,5 @@
+import { Typography } from "@mui/material";
 import PartnersManager from "../components/PartnersManager";
-import PartnersPageHeader from "../components/PartnersPageHeader";
 import { useDialogState } from "../hooks/useDialogState";
 import { PartnerOrganization } from "../models/partnerOrganization";
 
@@ -9,7 +9,7 @@ export default function PartnersPage() {
 
   return (
     <>
-      <PartnersPageHeader handleOpenAddPartnerDialog={addPartnerDialogState.open} />
+      <Typography className="!mr-2" variant="h4" component={'h1'}>Parceiros</Typography>
       <PartnersManager addPartnerDialogState={addPartnerDialogState} />
     </>
   )
