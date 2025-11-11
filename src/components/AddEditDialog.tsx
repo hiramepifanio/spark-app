@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
 import { FormEventHandler, ReactNode } from "react";
 
 export type AddEditDialogMode = 'add' | 'edit'
@@ -26,11 +26,15 @@ export default function AddEditDialog({ isOpen, mode, description, cancelHandler
       open={isOpen} 
       onClose={cancelHandler} 
       disableRestoreFocus
+      maxWidth='sm'
+      fullWidth={true}
     >
       <DialogTitle>{mode === 'edit' ? 'Editar' : 'Adicionar'} {description}</DialogTitle>
-      <DialogContent className="w-md" >
+      <DialogContent>
         <Box mt={1} component="form" onSubmit={submitHandler} id="form">
-          {children}
+          <Stack gap={2}>
+            {children}
+          </Stack>
         </Box>
       </DialogContent>
       <DialogActions>

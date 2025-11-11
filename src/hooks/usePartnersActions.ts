@@ -11,11 +11,8 @@ export default function usePartnersActions() {
   const { get, post, put, del } = useAPI()
   const { enqueueSnackbar } = useSnackbar()
   const [partners, setPartners] = useState<PartnerOrganization[]>([])
+  const [partner, setPartner] = useState<PartnerOrganization>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-
-  useEffect(() => {
-    listPartners()
-  }, [])
   
   async function listPartners(): Promise<void> {
     setIsLoading(true)
@@ -29,6 +26,29 @@ export default function usePartnersActions() {
     }
 
     setPartners(data)
+    setIsLoading(false)
+  }
+  
+  async function retrievePartner(id: number): Promise<void> {
+    setIsLoading(true)
+    const { isOk, data, errors } = await get<PartnerOrganization>(`/partner-organizations/${id}/`)
+
+    if (!isOk) {
+      const message = errors.detail ?? 'Houve algum erro ao buscar parceiro'
+      enqueueSnackbar(message, { variant: 'error' })
+      setIsLoading(false)
+      return
+    }
+
+    setPartner(data)
+    setPartners(prevPartners => {
+      const i = prevPartners.findIndex(partner => partner.id === id)
+      if (i) {
+        return prevPartners.map(partner => partner.id === id ? data : partner)
+      } else {
+        return [...prevPartners, data]
+      }
+    })
     setIsLoading(false)
   }
 
@@ -48,5 +68,12 @@ export default function usePartnersActions() {
     return response
   }
 
-  return { partners, isLoading, addPartner }
+  return {
+    partners,
+    partner,
+    isLoading,
+    listPartners,
+    retrievePartner,
+    addPartner
+  }
 }

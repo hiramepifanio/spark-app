@@ -1,13 +1,11 @@
-import { Avatar, Box, Button, Card, CardActionArea, CardContent, CardHeader, Chip, Grid, IconButton, Stack, Tab, Tabs, TextField, Toolbar, Typography } from "@mui/material"
-import { useFetch } from "../hooks/useFetch"
+import { Avatar, Button, Card, CardActionArea, CardContent, CardHeader, Chip, Grid, IconButton, Stack, Tab, Tabs, Toolbar } from "@mui/material"
 import { PartnerOrganization } from "../models/partnerOrganization"
 import { DialogState } from "../hooks/useDialogState"
 import AddEditPartnerDialog from "./AddEditPartnerDialog"
-import { useAPI } from "../hooks/useAPI"
-import { FormEvent, useState } from "react"
-import { useSnackbar } from "notistack"
+import { FormEvent, useEffect, useState } from "react"
 import usePartnersActions, { AddPartnerOrganizationDTO } from "../hooks/usePartnersActions"
 import { Add, FilterList, Search } from "@mui/icons-material"
+import { useNavigate } from "react-router-dom"
 
 const tags = [
   "IA",
@@ -28,8 +26,13 @@ interface PartnersManagerProps {
 }
 
 export default function PartnersManager({ addPartnerDialogState }: PartnersManagerProps) {
-  const { partners, isLoading, addPartner } = usePartnersActions()
+  const { partners, isLoading, listPartners, addPartner } = usePartnersActions()
   const [value, setValue] = useState<number>(0);
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    listPartners()
+  }, [])
 
   async function handleSubmitAddStageForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -50,6 +53,10 @@ export default function PartnersManager({ addPartnerDialogState }: PartnersManag
   
   function handleChange(event: React.SyntheticEvent, newValue: number) {
     setValue(newValue)
+  }
+
+  function handleClickPartnerCard(partnerId: number) {
+    navigate(`/partners/${partnerId}`)
   }
 
   return(
@@ -81,7 +88,7 @@ export default function PartnersManager({ addPartnerDialogState }: PartnersManag
         {!isLoading && partners!.map(partner => (
           <Grid key={partner.id} size={4}>
             <Card>
-              <CardActionArea onClick={() => console.log('click' + partner.name)}>
+              <CardActionArea onClick={() => handleClickPartnerCard(partner.id)}>
                 <CardHeader
                   avatar={
                     <Avatar aria-label="recipe">
